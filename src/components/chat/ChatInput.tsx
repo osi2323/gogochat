@@ -33,6 +33,8 @@ import {
   X,
   Plus,
   Megaphone,
+  MessageSquare,
+  Phone,
   Sparkles,
 } from "lucide-react";
 import { useVoiceChat } from "@/contexts/VoiceChatContext";
@@ -2716,10 +2718,12 @@ export const ChatInput = ({
           ref={emojiPickerRef}
           className="absolute bottom-full left-2 z-50 mb-1.5 w-[min(92vw,360px)] overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-2xl md:left-4 md:mb-2"
         >
-          <div className="grid grid-cols-3 gap-1 border-b border-zinc-200 bg-zinc-50 p-1.5">
-            <button type="button" onClick={() => { setMobileMediaPickerTab("emoji"); setShowEmojiPicker(true); setShowAnimationPicker(false); }} className={`rounded-xl px-2 py-2 text-[11px] font-black ${mobileMediaPickerTab === "emoji" ? "bg-zinc-900 text-white" : "text-zinc-600"}`}>EMOJİ</button>
-            <button type="button" onClick={() => { setMobileMediaPickerTab("animation"); setShowAnimationPicker(true); setShowEmojiPicker(false); }} className={`rounded-xl px-2 py-2 text-[11px] font-black ${mobileMediaPickerTab === "animation" ? "bg-violet-600 text-white" : "text-zinc-600"}`}>ANİMASYON</button>
-            <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("chatson:open-mobile-friends"))} className="rounded-xl px-2 py-2 text-[11px] font-black text-cyan-700 hover:bg-cyan-50">ARKADAŞLAR</button>
+          <div className="grid grid-cols-5 gap-1 border-b border-zinc-200 bg-zinc-50 p-1.5">
+            <button type="button" onClick={() => { setMobileMediaPickerTab("emoji"); setShowEmojiPicker(true); setShowAnimationPicker(false); }} className={`flex flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[9px] font-black ${mobileMediaPickerTab === "emoji" ? "bg-zinc-900 text-white" : "text-zinc-600"}`}><Smile className="h-4 w-4" />EMOJİ</button>
+            <button type="button" onClick={() => { setMobileMediaPickerTab("animation"); setShowAnimationPicker(true); setShowEmojiPicker(false); }} className={`flex flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[9px] font-black ${mobileMediaPickerTab === "animation" ? "bg-violet-600 text-white" : "text-zinc-600"}`}><Sparkles className="h-4 w-4" />ANİM.</button>
+            <button type="button" onClick={() => { setShowEmojiPicker(false); setShowAnimationPicker(false); window.dispatchEvent(new CustomEvent("chatson:open-mobile-wall")); }} className="flex flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[9px] font-black text-violet-700 hover:bg-violet-50"><MessageSquare className="h-4 w-4" />STORY</button>
+            <button type="button" onClick={() => { setShowEmojiPicker(false); setShowAnimationPicker(false); window.dispatchEvent(new CustomEvent("chatson:open-mobile-friends")); }} className="flex flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[9px] font-black text-cyan-700 hover:bg-cyan-50"><UserRound className="h-4 w-4" />ARK.</button>
+            <button type="button" onClick={() => { setShowEmojiPicker(false); setShowAnimationPicker(false); window.dispatchEvent(new CustomEvent("chatson:open-mobile-calls")); }} className="flex flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[9px] font-black text-emerald-700 hover:bg-emerald-50"><Phone className="h-4 w-4" />ARAMA</button>
           </div>
           <div className="max-h-[42svh] overflow-auto">
             {mobileMediaPickerTab === "animation" ? (
