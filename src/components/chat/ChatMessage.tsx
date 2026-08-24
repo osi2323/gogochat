@@ -446,7 +446,7 @@ export const ChatMessage = ({
         lineHeight: 1.3,
       }
     : {};
-  const showSender = !isMe;
+  const showSender = true;
   const senderTextClass = isWelcomeMessage && !isAiWelcomeMessage
     ? "text-base font-extrabold text-blue-600"
     : "text-base font-semibold text-blue-600";
@@ -729,11 +729,9 @@ export const ChatMessage = ({
   return (
     <div
       id={messageId ? `message-${messageId}` : undefined}
-      className={`group flex w-full items-start gap-2 ${
-        isMe ? "justify-end" : "justify-start"
-      }`}
+      className="group flex w-full items-start justify-start gap-2"
     >
-      {!isMe && (
+      {(
         <div
           className="shrink-0 pt-4 md:pt-0 cursor-pointer"
           onClick={() => onShowProfile?.(profileUsername || sender)}
@@ -759,9 +757,6 @@ export const ChatMessage = ({
           </div>
         </div>
       )}
-
-      {/* Menu for right side (my messages) - Moved to left of message */}
-      {isMe && !isSystemMessage && renderMessageMenu()}
 
       <div className="flex flex-col max-w-[82%] md:max-w-[68%]">
         {onlyMedia ? (
@@ -793,7 +788,7 @@ export const ChatMessage = ({
                   </div>
                 </div>
               )}
-              <div className={`${bubbleBase} ${isMe ? 'rounded-tr-[6px]' : 'rounded-tl-[6px]'}`}>
+              <div className={`${bubbleBase} rounded-tl-[6px]`}>
                 <div className="flex flex-col md:flex-row md:flex-wrap md:items-baseline md:gap-x-2 md:gap-y-0.5">
                   {showSender && (
                     <>
@@ -862,7 +857,7 @@ export const ChatMessage = ({
                     </div>
                   </div>
                 )}
-                <div className={`${bubbleBase} ${isMe ? 'rounded-tr-[6px]' : 'rounded-tl-[6px]'}`}>
+                <div className={`${bubbleBase} rounded-tl-[6px]`}>
                   <div className="flex flex-col md:flex-row md:flex-wrap md:items-baseline md:gap-x-2 md:gap-y-0.5">
                     {showSender && (
                       <span className={`hidden md:inline ${senderTextClass}`}>
@@ -895,7 +890,7 @@ export const ChatMessage = ({
                   </div>
                 )}
                 <div
-                  className={`${bubbleBase} ${isMe ? 'rounded-tr-[6px]' : 'rounded-tl-[6px]'}`}
+                  className={`${bubbleBase} rounded-tl-[6px]`}
                   style={messageTextStyle}
                 >
                   <div className="flex flex-col md:flex-row md:flex-wrap md:items-baseline md:gap-x-2 md:gap-y-0.5">
@@ -932,29 +927,7 @@ export const ChatMessage = ({
         )}
       </div>
 
-      {/* Menu for left side (other users' messages) - Moved to right of message */}
-      {!isMe && !isSystemMessage && renderMessageMenu()}
-
-      {isMe && (
-        <div className="shrink-0 pt-3 md:pt-0">
-          <div className="chat-message-avatar-frame relative h-9 w-9 p-[1px] md:h-8 md:w-8 md:p-0">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-amber-600 via-yellow-400 to-amber-600 shadow-[0_0_6px_rgba(251,191,36,0.35)] md:hidden" />
-            <div className="absolute inset-[2px] rounded-full bg-zinc-900 md:hidden" />
-
-            <div className="relative flex h-full w-full items-center justify-center rounded-full bg-zinc-800 p-[1.5px] text-xs font-bold text-white md:bg-green-500 md:p-0">
-              {avatar ? (
-                <img
-                  src={avatar}
-                  alt={sender}
-                  className="h-full w-full rounded-full object-cover"
-                />
-              ) : (
-                sender[0].toUpperCase()
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {!isSystemMessage && renderMessageMenu()}
       {/* Image Modal / Lightbox */}
       {typeof document !== "undefined" && isModalOpen && image
         ? createPortal(

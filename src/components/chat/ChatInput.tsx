@@ -31,6 +31,8 @@ import {
   Globe,
   X,
   Plus,
+  Megaphone,
+  Sparkles,
 } from "lucide-react";
 import { useVoiceChat } from "@/contexts/VoiceChatContext";
 import { MsnEmojiPicker } from "./MsnEmojiPicker";
@@ -255,6 +257,9 @@ export const ChatInput = ({
   const [showTargetGroupMenu, setShowTargetGroupMenu] = useState(false);
   const [showMobileRadioMenu, setShowMobileRadioMenu] = useState(false);
   const [showMobilePlusMenu, setShowMobilePlusMenu] = useState(false);
+  const [showAnnouncementComposer, setShowAnnouncementComposer] = useState(false);
+  const [announcementText, setAnnouncementText] = useState("");
+  const [announcementSending, setAnnouncementSending] = useState(false);
   const [showMobileTargetMenu, setShowMobileTargetMenu] = useState(false);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [cameraBanned, setCameraBanned] = useState(initialCameraBanned);
@@ -316,6 +321,30 @@ export const ChatInput = ({
   } = useVoiceChat();
   const isMicOpen = isInVoiceChat && !isMuted;
   const isHandDisabled = isMicOpen || isOnRoof;
+  const isKonsolAccount =
+    typeof window !== "undefined" &&
+    String(localStorage.getItem("username") || "")
+      .trim()
+      .toLocaleLowerCase("tr-TR") === "konsol";
+
+  const sendChatsOnAnnouncement = async () => {
+    const content = announcementText.trim();
+    if (!content || announcementSending) return;
+    try {
+      setAnnouncementSending(true);
+      await apiClientRef.current.post("/system-settings/system-message", { content });
+      setAnnouncementText("");
+      setShowAnnouncementComposer(false);
+      toast.success("ChatsON duyurusu yayınlandı.");
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message || error?.message || "Duyuru gönderilemedi.";
+      toast.error(String(message));
+    } finally {
+      setAnnouncementSending(false);
+    }
+  };
+
   const canUseGeneralBroadcast = useMemo(
     () => {
       if (currentUserStarCount > 0) {
@@ -2215,7 +2244,7 @@ export const ChatInput = ({
     sendBlockedReasonLower.includes("sonra");
 
   return (
-    <div className="chat-theme-input absolute inset-x-0 bottom-0 z-[90] border-t-0 bg-black/90 px-2 py-1 pb-[calc(env(safe-area-inset-bottom)+0.25rem)] md:relative md:inset-auto md:z-[80] md:border-t md:border-zinc-200 md:bg-white md:px-4 md:py-3">
+    <div className="chat-theme-input relative inset-auto z-[90] border-t-2 border-[#e7e0d2] bg-[#fffdf8] px-2.5 py-2 pb-[calc(env(safe-area-inset-bottom)+0.55rem)] shadow-[0_-10px_30px_rgba(0,0,0,0.14)] md:z-[80] md:border-t md:border-zinc-200 md:bg-white md:px-4 md:py-3">
       {/* Reply Preview */}
       {replyTo && (
         <div className="mb-2 flex items-center gap-2 rounded-lg bg-blue-50 border-l-4 border-blue-500 px-3 py-2">
@@ -2704,13 +2733,13 @@ export const ChatInput = ({
           />
         </div>
       )}
-      <div className="chat-theme-toolbar flex h-10 items-center gap-1.5 md:h-auto md:flex-wrap md:gap-2">
+      <div className="chat-theme-toolbar flex min-h-12 items-center gap-1.5 md:h-auto md:flex-wrap md:gap-2">
         {/* Sol taraf - Dosya ve Emoji */}
         <button
           ref={animationButtonRef}
           type="button"
           onClick={() => setShowAnimationPicker(!showAnimationPicker)}
-          className={`order-3 h-7 w-7 shrink-0 items-center justify-center text-white transition-colors hover:text-white/80 md:order-none md:flex md:h-10 md:w-10 md:rounded-lg md:bg-blue-500 md:hover:bg-blue-600 ${
+          className={`order-3 h-7 w-7 shrink-0 items-center justify-center text-zinc-700 transition-colors hover:text-zinc-950 md:order-none md:flex md:h-10 md:w-10 md:rounded-lg md:bg-blue-500 md:hover:bg-blue-600 ${
             isMobileTypingMode ? "hidden" : "flex"
           } ${
             showAnimationPicker ? "text-white md:ring-2 md:ring-blue-300" : ""
@@ -2724,7 +2753,7 @@ export const ChatInput = ({
           ref={buttonRef}
           type="button"
           onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-          className={`order-1 flex h-7 w-7 shrink-0 items-center justify-center text-white transition-colors hover:text-white/80 md:order-none md:h-10 md:w-10 md:text-zinc-600 md:hover:text-zinc-900 ${
+          className={`order-1 flex h-7 w-7 shrink-0 items-center justify-center text-zinc-700 transition-colors hover:text-zinc-950 md:order-none md:h-10 md:w-10 md:text-zinc-600 md:hover:text-zinc-900 ${
             showEmojiPicker
               ? "text-white md:rounded-lg md:bg-zinc-100 md:text-zinc-900"
               : ""
@@ -2758,7 +2787,7 @@ export const ChatInput = ({
             value={message}
             onChange={handleMessageChange}
             onKeyDown={handleKeyDown}
-            className="w-full bg-transparent py-0.5 pl-1 pr-1 text-[24px] font-light leading-none text-white placeholder-white/90 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 md:rounded-lg md:bg-zinc-100 md:py-2.5 md:pl-4 md:pr-10 md:text-base md:font-normal md:leading-normal md:text-zinc-900 md:placeholder-zinc-400"
+            className="w-full rounded-2xl border-2 border-[#d9d0bf] bg-white px-3.5 py-2.5 text-[16px] font-semibold leading-5 text-zinc-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_4px_14px_rgba(15,23,42,0.06)] placeholder-zinc-400 outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-400/10 disabled:cursor-not-allowed disabled:opacity-60 md:rounded-lg md:border-0 md:bg-zinc-100 md:py-2.5 md:pl-4 md:pr-10 md:text-base md:font-normal md:leading-normal md:text-zinc-900 md:shadow-none md:placeholder-zinc-400"
             placeholder={
               floodCooldown > 0
                 ? `Flood koruması aktif! ${floodCooldown} saniye bekleyin...`
@@ -2885,7 +2914,7 @@ export const ChatInput = ({
               sendBlocked ||
               writingDisabled
             }
-            className={`h-7 w-7 shrink-0 items-center justify-center text-white transition-colors hover:text-white/80 disabled:opacity-40 md:hidden ${
+            className={`h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white shadow-[0_6px_16px_rgba(124,58,237,0.28)] transition hover:bg-violet-700 disabled:opacity-40 md:hidden ${
               isMobileTypingMode ? "flex" : "hidden"
             }`}
             aria-label="Mesaj gönder"
@@ -3292,6 +3321,17 @@ export const ChatInput = ({
               </button>
             </div>
           )}
+          {isKonsolAccount ? (
+            <button
+              type="button"
+              onClick={() => setShowAnnouncementComposer(true)}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-fuchsia-300/40 bg-fuchsia-500/10 text-fuchsia-600 shadow-sm transition hover:bg-fuchsia-500/15 md:h-9 md:w-9"
+              aria-label="ChatsON global duyuru"
+              title="ChatsON global duyuru"
+            >
+              <Megaphone className="h-5 w-5" />
+            </button>
+          ) : null}
           <button
             type="button"
             ref={mobilePlusButtonRef}
@@ -3300,10 +3340,8 @@ export const ChatInput = ({
               setShowMobileRadioMenu(false);
               setShowAttachmentMenu(false);
             }}
-            className={`h-6 w-6 shrink-0 items-center justify-center text-white transition-colors hover:text-white/80 md:hidden ${
-              isMobileTypingMode ? "hidden" : "flex"
-            }`}
-            title="Artı işareti"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700 shadow-sm transition hover:bg-zinc-50 md:hidden"
+            title="Mobil araçlar / geçmiş / ekran temizle"
           >
             <Plus className="h-5 w-5 stroke-[1.9]" />
           </button>
@@ -3471,6 +3509,44 @@ export const ChatInput = ({
           </div>
         )}
       </div>
+
+      {showAnnouncementComposer && isKonsolAccount ? (
+        <div className="fixed inset-0 z-[700] flex items-end justify-center bg-black/55 p-3 backdrop-blur-sm sm:items-center">
+          <div className="w-full max-w-md overflow-hidden rounded-[24px] border-2 border-fuchsia-300/35 bg-[#0a1220] shadow-[0_24px_80px_rgba(0,0,0,0.55)]">
+            <div className="flex items-center justify-between border-b border-white/10 px-4 py-3.5">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-fuchsia-400/10 text-fuchsia-200">
+                  <Megaphone className="h-5 w-5" />
+                </div>
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-fuchsia-300">Konsol Özel</div>
+                  <div className="text-base font-black text-white">ChatsON Global Duyuru</div>
+                </div>
+              </div>
+              <button type="button" onClick={() => setShowAnnouncementComposer(false)} className="rounded-xl p-2 text-slate-400 hover:bg-white/5 hover:text-white"><X className="h-5 w-5" /></button>
+            </div>
+            <div className="p-4">
+              <textarea
+                value={announcementText}
+                onChange={(event) => setAnnouncementText(event.target.value.slice(0, 280))}
+                rows={4}
+                className="w-full resize-none rounded-2xl border-2 border-white/10 bg-white/[0.06] px-4 py-3 text-[16px] font-semibold text-white outline-none placeholder:text-slate-500 focus:border-fuchsia-300/40"
+                placeholder="Tüm odalarda yukarıdan gösterilecek duyuruyu yaz..."
+              />
+              <div className="mt-2 flex items-center justify-between text-[10px] font-bold text-slate-500"><span>Tüm odalarda anlık görünür</span><span>{announcementText.length}/280</span></div>
+              <button
+                type="button"
+                onClick={() => void sendChatsOnAnnouncement()}
+                disabled={!announcementText.trim() || announcementSending}
+                className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-fuchsia-600 via-violet-600 to-cyan-600 text-sm font-black text-white shadow-[0_14px_32px_rgba(124,58,237,0.26)] disabled:opacity-50"
+              >
+                <Sparkles className="h-4 w-4" />
+                {announcementSending ? "Yayınlanıyor..." : "Duyuruyu Yayınla"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {showCameraPreview && (
         <div

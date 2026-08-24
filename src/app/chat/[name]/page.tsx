@@ -51,6 +51,7 @@ import {
   ImageIcon,
   LockKeyhole,
   MessageSquare,
+  Megaphone,
   Mic,
   MicOff,
   Power,
@@ -61,6 +62,7 @@ import {
   User,
   UsersRound,
   Volume2,
+  X,
 } from "lucide-react";
 import {
   clearRoomNavigationIntent,
@@ -1187,24 +1189,17 @@ function ChatPageContent({
   const leaveCall = callVoice.leaveCall;
   const callRemoteUsers = callVoice.remoteUsers;
   const localVideoTrack = callVoice.localVideoTrack;
-  const isCustomPhotoBackground = Boolean(chatBackground?.includes(
-    "/images/456712280_17999227514656648_949295733479667370_n.jpg",
-  ));
-  const chatBackgroundStyle: React.CSSProperties = isCustomPhotoBackground
+  const chatBackgroundStyle: React.CSSProperties = chatBackground
     ? {
         backgroundColor: "#020612",
         backgroundImage: `url('${chatBackground}')`,
-        backgroundPosition: "center 42%",
+        backgroundPosition: "center center",
         backgroundRepeat: "no-repeat",
-        backgroundSize: "62% auto",
+        backgroundSize: "cover",
       }
-    : chatBackground
-      ? {
-        backgroundImage: `url('${chatBackground}')`,
-        }
-      : {
-          backgroundColor: "#020612",
-        };
+    : {
+        backgroundColor: "#020612",
+      };
   const mobileSoftButtonFrame =
     "border border-[var(--chat-mobile-control-frame)] bg-black/10 shadow-[0_6px_16px_rgba(0,0,0,0.22)] ring-1 ring-[var(--chat-mobile-control-ring)] backdrop-blur-md";
   const mobileSoftButtonInner =
@@ -3961,9 +3956,9 @@ function ChatPageContent({
   const onlinePresenceNames = useMemo(
     () =>
       new Set(
-        onlinePresenceUsers.map((user) =>
-          user.username.trim().toLocaleLowerCase("tr-TR"),
-        ),
+        onlinePresenceUsers
+          .filter((user) => user.statusModeName !== "Çatıda")
+          .map((user) => user.username.trim().toLocaleLowerCase("tr-TR")),
       ),
     [onlinePresenceUsers],
   );
@@ -4049,7 +4044,7 @@ function ChatPageContent({
 
   return (
     <div
-      className={`kingmobile-desktop-shell relative flex h-[100svh] overflow-hidden md:h-[100dvh] ${chatThemeClassName}`}
+      className={`kingmobile-desktop-shell relative flex h-[100dvh] overflow-hidden ${chatThemeClassName}`}
       data-chat-theme={chatSiteTheme}
       style={chatThemeStyle}
     >
@@ -4518,14 +4513,11 @@ function ChatPageContent({
           setMobileSidebarTab("rooms");
           setIsMobileSidebarOpen(true);
         }}
-        className="fixed right-0 top-1/2 z-[105] flex -translate-y-1/2 items-center gap-1 rounded-l-[18px] border-2 border-r-0 border-violet-300/35 bg-[#0a1220]/95 px-2.5 py-4 text-white shadow-[-8px_8px_28px_rgba(0,0,0,0.34)] backdrop-blur-xl transition active:scale-95 md:hidden"
+        className="fixed left-0 top-1/2 z-[105] flex h-14 w-9 -translate-y-1/2 items-center justify-center rounded-r-[18px] border-2 border-l-0 border-violet-300/40 bg-[#08111f]/96 text-white shadow-[8px_8px_28px_rgba(0,0,0,0.34)] backdrop-blur-xl transition active:scale-95 md:hidden"
         aria-label="Oda listesini aç"
         title="Odalar"
       >
-        <UsersRound className="h-4 w-4 text-cyan-200" />
-        <span className="[writing-mode:vertical-rl] rotate-180 text-[9px] font-black uppercase tracking-[0.18em] text-slate-200">
-          Odalar
-        </span>
+        <UsersRound className="h-5 w-5 text-cyan-200" />
       </button>
 
       {isMobileSidebarOpen ? (
@@ -5478,6 +5470,11 @@ export default function ChatPage() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [roomUsers, setRoomUsers] = useState<RoomUser[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [activeGlobalAnnouncement, setActiveGlobalAnnouncement] = useState<{
+    message: string;
+    timestamp: string;
+  } | null>(null);
+  const globalAnnouncementTimerRef = useRef<number | null>(null);
   const [roomJoinRevision, setRoomJoinRevision] = useState(0);
   const [joinError, setJoinError] = useState<string | null>(null);
   const [userStarCount, setUserStarCount] = useState<number>(0);
@@ -10575,6 +10572,18 @@ export default function ChatPage() {
         const message = String(data?.message || "").trim();
         if (!message) return;
 
+        if (globalAnnouncementTimerRef.current !== null) {
+          window.clearTimeout(globalAnnouncementTimerRef.current);
+        }
+        setActiveGlobalAnnouncement({
+          message,
+          timestamp: data?.timestamp || new Date().toISOString(),
+        });
+        globalAnnouncementTimerRef.current = window.setTimeout(() => {
+          setActiveGlobalAnnouncement(null);
+          globalAnnouncementTimerRef.current = null;
+        }, 10000);
+
         const normalized: Message = {
           room: activeRoomId || activeRoom || roomDisplayName,
           username: "Sistem Mesajı",
@@ -11376,6 +11385,31 @@ export default function ChatPage() {
 
   return (
     <>
+      {activeGlobalAnnouncement ? (
+        <div className="pointer-events-none fixed inset-x-3 top-3 z-[160] flex justify-center md:top-[104px]">
+          <div className="pointer-events-auto relative w-full max-w-[860px] overflow-hidden rounded-[22px] border-2 border-fuchsia-300/40 bg-[linear-gradient(105deg,rgba(34,8,67,0.98),rgba(14,42,74,0.98),rgba(8,73,72,0.98))] px-4 py-3.5 shadow-[0_20px_60px_rgba(0,0,0,0.44),0_0_42px_rgba(168,85,247,0.18)] backdrop-blur-xl">
+            <div className="absolute inset-y-0 -left-1/3 w-1/3 animate-[pulse_2s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <div className="relative flex items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-fuchsia-200/35 bg-fuchsia-300/12 text-fuchsia-100 shadow-[0_0_24px_rgba(217,70,239,0.20)]">
+                <Megaphone className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[9px] font-black uppercase tracking-[0.24em] text-cyan-200/85">ChatsON Duyurusu</div>
+                <div className="mt-0.5 text-sm font-black leading-5 text-white sm:text-[15px]">{activeGlobalAnnouncement.message}</div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveGlobalAnnouncement(null)}
+                className="pointer-events-auto flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
+                aria-label="Duyuruyu kapat"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <VoiceChatProvider
         socket={socket}
         roomName={roomId}

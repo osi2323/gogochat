@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { GlobalSiteTitleSync } from "@/components/app/GlobalSiteTitleSync";
 import {
   Audiowide,
@@ -136,9 +136,17 @@ const grenzeGotisch = Grenze_Gotisch({
   weight: "400",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
-  title: "KingMobile",
-  description: "KingMobile giris sayfasi",
+  title: "ChatsON",
+  description: "ChatsON giriş sayfası",
 };
 
 export default function RootLayout({
@@ -147,7 +155,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="tr">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${notoSansSymbols2.variable} ${spaceGrotesk.variable} ${comfortaa.variable} ${bebasNeue.variable} ${kalam.variable} ${pacifico.variable} ${caveat.variable} ${permanentMarker.variable} ${lobsterTwo.variable} ${orbitron.variable} ${audiowide.variable} ${turretRoad.variable} ${monoton.variable} ${cormorantGaramond.variable} ${playfairDisplay.variable} ${cinzel.variable} ${grenzeGotisch.variable} antialiased`}
       >

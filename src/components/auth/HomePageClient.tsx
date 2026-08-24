@@ -14,7 +14,6 @@ import type {
   MaintenanceModeSettings,
 } from "@/services/systemSettingsService";
 import {
-  Activity,
   Crown,
   ShieldCheck,
   Apple,
@@ -290,6 +289,7 @@ const usePublicRoster = (): PublicRosterState => {
       }
       const names = new Set(
         (Array.isArray(data.users) ? data.users : [])
+          .filter((user: any) => user?.statusModeName !== "Çatıda")
           .map((user) => normalizePublicName(user?.username))
           .filter(Boolean),
       );
@@ -324,8 +324,18 @@ const usePublicRoster = (): PublicRosterState => {
   );
 };
 
+const LoginOnlineCounter = () => {
+  const { onlineCount } = usePublicRoster();
+  return (
+    <div className="flex h-12 min-w-[76px] flex-col items-center justify-center rounded-2xl border-2 border-emerald-300/30 bg-emerald-400/[0.08] px-3 shadow-[0_0_26px_rgba(16,185,129,0.11)]">
+      <span className="text-xl font-black leading-none text-white">{onlineCount}</span>
+      <span className="mt-1 text-[8px] font-black uppercase tracking-[0.2em] text-emerald-300">Online</span>
+    </div>
+  );
+};
+
 const LoginRosterStrip = () => {
-  const { siteOwners, managers, onlineNames, onlineCount } = usePublicRoster();
+  const { siteOwners, managers, onlineNames } = usePublicRoster();
 
   const renderCard = (
     user: PublicRosterUser,
@@ -338,14 +348,14 @@ const LoginRosterStrip = () => {
     return (
       <div
         key={`${type}-${user.id}-${user.username}`}
-        className={`group flex min-w-0 items-center gap-3 rounded-2xl border-2 px-3 py-2.5 shadow-[0_12px_30px_rgba(0,0,0,0.22)] ${
+        className={`group flex min-w-[210px] shrink-0 items-center gap-3.5 rounded-[22px] border-2 px-3.5 py-3 shadow-[0_14px_34px_rgba(0,0,0,0.30)] backdrop-blur-xl ${
           isOwner
             ? "border-amber-300/45 bg-gradient-to-r from-amber-300/12 via-amber-100/[0.04] to-transparent"
             : "border-cyan-300/30 bg-gradient-to-r from-cyan-300/10 via-sky-300/[0.04] to-transparent"
         }`}
       >
         <div
-          className={`relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 bg-[#0d1727] text-base font-black ${
+          className={`relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[20px] border-2 bg-[#0d1727] text-lg font-black ${
             isOwner
               ? "border-amber-300/55 text-amber-100 shadow-[0_0_24px_rgba(251,191,36,0.16)]"
               : "border-cyan-300/40 text-cyan-100 shadow-[0_0_22px_rgba(34,211,238,0.12)]"
@@ -364,7 +374,7 @@ const LoginRosterStrip = () => {
         </div>
         <div className="min-w-0">
           <div
-            className={`truncate text-sm font-black tracking-tight ${
+            className={`truncate text-[15px] font-black tracking-[-0.015em] ${
               isOwner ? "text-amber-100" : "text-cyan-50"
             }`}
           >
@@ -384,30 +394,12 @@ const LoginRosterStrip = () => {
 
   return (
     <div className="mt-6 space-y-4 border-t-2 border-white/10 pt-5">
-      <div className="flex items-center justify-between rounded-2xl border-2 border-emerald-300/25 bg-emerald-400/[0.07] px-4 py-3 shadow-[0_0_30px_rgba(16,185,129,0.08)]">
-        <div>
-          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-emerald-300">
-            <Activity className="h-4 w-4" />
-            ChatsON Canlı
-          </div>
-          <div className="mt-1 text-xs font-bold text-slate-400">
-            Botlar dahil anlık site çevrimiçi sayısı
-          </div>
-        </div>
-        <div className="text-right">
-          <div className="text-3xl font-black leading-none text-white">{onlineCount}</div>
-          <div className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-emerald-300">
-            Online
-          </div>
-        </div>
-      </div>
-
       <div>
         <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-amber-300">
           <Crown className="h-4 w-4" />
           Site Sahipleri
         </div>
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="flex gap-2.5 overflow-x-auto pb-2 pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {siteOwners.length > 0 ? (
             siteOwners.map((user) => renderCard(user, "owner"))
           ) : (
@@ -423,7 +415,7 @@ const LoginRosterStrip = () => {
           <ShieldCheck className="h-4 w-4" />
           Yönetici Listesi
         </div>
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="flex gap-2.5 overflow-x-auto pb-2 pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {managers.length > 0 ? (
             managers.map((user) => renderCard(user, "manager"))
           ) : (
@@ -483,10 +475,10 @@ const StandardLoginPage = ({
                 <img
                   src={logoUrl}
                   alt={siteName}
-                  className="mb-5 max-h-24 max-w-[290px] object-contain drop-shadow-[0_16px_34px_rgba(0,0,0,0.45)] sm:max-h-28 sm:max-w-[350px]"
+                  className="mb-5 hidden max-h-24 max-w-[290px] object-contain drop-shadow-[0_16px_34px_rgba(0,0,0,0.45)] sm:max-h-28 sm:max-w-[350px] lg:block"
                 />
               ) : (
-                <div className="mb-5 flex items-center gap-4">
+                <div className="mb-5 hidden items-center gap-4 lg:flex">
                   <div className="relative flex h-16 w-16 items-center justify-center rounded-[22px] border border-violet-400/30 bg-gradient-to-br from-violet-500/30 via-blue-500/20 to-cyan-400/15 shadow-[0_0_34px_rgba(124,58,237,0.25)] sm:h-20 sm:w-20">
                     <span className="bg-gradient-to-r from-violet-200 via-cyan-200 to-white bg-clip-text text-2xl font-black text-transparent sm:text-3xl">
                       KM
@@ -540,7 +532,24 @@ const StandardLoginPage = ({
                 <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-violet-500/12 blur-3xl" />
                 <div className="absolute -bottom-20 -left-16 h-44 w-44 rounded-full bg-cyan-400/10 blur-3xl" />
 
-                <div className="relative mb-6 flex items-center justify-between gap-3">
+                <div className="relative mb-5">
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <div className="flex h-12 min-w-12 items-center justify-center rounded-2xl border-2 border-red-300/25 bg-red-500/10 px-3 text-[25px] shadow-[0_0_24px_rgba(239,68,68,0.10)]" title="Türkiye">
+                      🇹🇷
+                    </div>
+                    {logoUrl ? (
+                      <img
+                        src={logoUrl}
+                        alt={siteName}
+                        className="max-h-16 max-w-[210px] object-contain drop-shadow-[0_12px_28px_rgba(0,0,0,0.45)] lg:hidden"
+                      />
+                    ) : (
+                      <div className="lg:hidden bg-gradient-to-r from-violet-200 via-cyan-200 to-white bg-clip-text text-xl font-black text-transparent">
+                        ChatsON
+                      </div>
+                    )}
+                    <LoginOnlineCounter />
+                  </div>
                   <div>
                     <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-300/70">
                       {siteName}
@@ -551,9 +560,6 @@ const StandardLoginPage = ({
                     <p className="mt-1 text-xs font-medium text-slate-500">
                       Rumuzunu belirle ve devam et.
                     </p>
-                  </div>
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-violet-300/20 bg-violet-400/10 text-violet-200 shadow-[0_0_24px_rgba(139,92,246,0.14)]">
-                    <Headphones className="h-6 w-6" />
                   </div>
                 </div>
 
