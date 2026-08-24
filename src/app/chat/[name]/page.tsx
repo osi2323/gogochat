@@ -60,7 +60,6 @@ import {
   Settings,
   ShieldCheck,
   User,
-  UserRound,
   UsersRound,
   Volume2,
   X,
@@ -8429,6 +8428,19 @@ export default function ChatPage() {
               if (target) {
                 resolvedRoomDetail = target;
                 setRoomDetail(target);
+
+                // URL slug/oda adı farklılaşsa bile socket'e backend'in gerçek oda adını gönder.
+                const canonicalRoomName =
+                  typeof target.name === "string" && target.name.trim()
+                    ? target.name.trim()
+                    : roomDisplayName;
+                const canonicalVoiceRoomId =
+                  target.voiceId != null && String(target.voiceId).trim()
+                    ? String(target.voiceId).trim()
+                    : canonicalRoomName;
+                activeRoom = canonicalVoiceRoomId;
+                setRoomId(canonicalVoiceRoomId);
+                setActiveRoomId(canonicalVoiceRoomId);
                 
                 // Oda detaylarını (açıklama vb.) arkada al; bu daha yavaş olabilir.
                 void (async () => {
@@ -8820,7 +8832,8 @@ export default function ChatPage() {
             roomId: resolvedRoomDetail?.id
               ? String(resolvedRoomDetail.id)
               : undefined,
-            roomName: roomDisplayName,
+            roomName:
+              resolvedRoomDetail?.name?.trim() || roomDisplayName,
             username,
             loginHistoryId:
               Number(localStorage.getItem("loginHistoryId")) || undefined,
