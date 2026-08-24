@@ -60,6 +60,7 @@ import {
   Settings,
   ShieldCheck,
   User,
+  UserRound,
   UsersRound,
   Volume2,
   X,
