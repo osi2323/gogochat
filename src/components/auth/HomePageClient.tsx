@@ -30,11 +30,9 @@ import {
   Mic,
   Play,
   Settings,
-  ShieldCheck,
   Smartphone,
   UserRound,
-  Wrench,
-} from "lucide-react";
+  Wrench,} from "lucide-react";
 import { env } from "@/config/env";
 import { io } from "socket.io-client";
 import { getClientApiClient } from "@/lib/api/clientApi";
