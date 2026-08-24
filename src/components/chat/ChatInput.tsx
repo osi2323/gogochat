@@ -2775,7 +2775,7 @@ export const ChatInput = ({
             value={message}
             onChange={handleMessageChange}
             onKeyDown={handleKeyDown}
-            className="w-full rounded-2xl border-2 border-[#d9d0bf] bg-white px-3.5 py-2.5 text-[16px] font-semibold leading-5 text-zinc-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_4px_14px_rgba(15,23,42,0.06)] placeholder-zinc-400 outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-400/10 disabled:cursor-not-allowed disabled:opacity-60 md:rounded-lg md:border-0 md:bg-zinc-100 md:py-2.5 md:pl-4 md:pr-10 md:text-base md:font-normal md:leading-normal md:text-zinc-900 md:shadow-none md:placeholder-zinc-400"
+            className="w-full rounded-2xl border-2 border-[#d9d0bf] bg-white px-3.5 py-2.5 text-[16px] font-semibold leading-5 !text-[#111827] caret-[#111827] shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_4px_14px_rgba(15,23,42,0.06)] placeholder-zinc-400 outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-400/10 disabled:cursor-not-allowed disabled:opacity-60 md:rounded-lg md:border-0 md:bg-zinc-100 md:py-2.5 md:pl-4 md:pr-10 md:text-base md:font-normal md:leading-normal md:text-zinc-900 md:shadow-none md:placeholder-zinc-400"
             placeholder={
               floodCooldown > 0
                 ? `Flood koruması aktif! ${floodCooldown} saniye bekleyin...`
