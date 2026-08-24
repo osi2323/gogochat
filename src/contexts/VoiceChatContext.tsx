@@ -515,17 +515,21 @@ export const VoiceChatProvider = ({
 
       if (!sameUser || !sameRoom) return;
 
-      const room = roomRef.current;
-      if (room) {
-        void room.localParticipant.setMicrophoneEnabled(false);
-      }
-      setIsMuted(true);
-      if (socket && roomName && currentUsername) {
-        socket.emit("voice:toggleMute", {
-          room: roomName,
-          username: currentUsername,
-          isMuted: true,
-        });
+      if (data.reason === "mic_drop") {
+        void leaveVoiceChat();
+      } else {
+        const room = roomRef.current;
+        if (room) {
+          void room.localParticipant.setMicrophoneEnabled(false);
+        }
+        setIsMuted(true);
+        if (socket && roomName && currentUsername) {
+          socket.emit("voice:toggleMute", {
+            room: roomName,
+            username: currentUsername,
+            isMuted: true,
+          });
+        }
       }
       window.dispatchEvent(
         new CustomEvent("kingmobile:voice-seat-force-released", {

@@ -1231,6 +1231,17 @@ function ChatPageContent({
   const [mobileSidebarTab, setMobileSidebarTab] = useState<
     "room" | "all" | "rooms" | "calls" | "friends" | "wall"
   >("room");
+
+  useEffect(() => {
+    const openFriends = () => {
+      setCloseMobileSidebarOnProfileClose(false);
+      setMobileInitialSelectedUser(null);
+      setMobileSidebarTab("friends");
+      setIsMobileSidebarOpen(true);
+    };
+    window.addEventListener("chatson:open-mobile-friends", openFriends);
+    return () => window.removeEventListener("chatson:open-mobile-friends", openFriends);
+  }, []);
   const [sidebarCounts, setSidebarCounts] = useState({
     roomUsersCount: 0,
     allUsersCount: 0,
@@ -4520,33 +4531,49 @@ function ChatPageContent({
         <UsersRound className="h-5 w-5 text-cyan-200" />
       </button>
 
+      <button
+        type="button"
+        onClick={() => {
+          setCloseMobileSidebarOnProfileClose(false);
+          setMobileInitialSelectedUser(null);
+          setMobileSidebarTab("room");
+          setIsMobileSidebarOpen(true);
+        }}
+        className="fixed right-0 top-1/2 z-[105] flex h-14 w-9 -translate-y-1/2 items-center justify-center rounded-l-[18px] border-2 border-r-0 border-cyan-300/40 bg-[#08111f]/96 text-white shadow-[-8px_8px_28px_rgba(0,0,0,0.34)] backdrop-blur-xl transition active:scale-95 md:hidden"
+        aria-label="Kişi listesini aç"
+        title="Kişiler"
+      >
+        <UserRound className="h-5 w-5 text-violet-200" />
+      </button>
+
       {isMobileSidebarOpen ? (
         <div
-          className={
-            mobileSidebarTab === "all"
-              || mobileSidebarTab === "rooms"
-              || mobileSidebarTab === "calls"
-              ? "fixed inset-0 z-[140] bg-[#f4f4f6] md:hidden"
-              : "fixed inset-0 z-[110] flex items-end justify-center bg-black/45 px-0 md:hidden"
-          }
+          className={`fixed inset-0 z-[140] flex md:hidden ${
+            mobileSidebarTab === "rooms" || mobileSidebarTab === "calls"
+              ? "items-stretch justify-start bg-black/25"
+              : "items-stretch justify-end bg-black/25"
+          }`}
         >
-          {mobileSidebarTab !== "all" && mobileSidebarTab !== "rooms" && mobileSidebarTab !== "calls" && (
-            <button
-              type="button"
-              className="absolute inset-0 cursor-default"
-              aria-label="Liste panelini kapat"
-              onClick={() => setIsMobileSidebarOpen(false)}
-            />
-          )}
+          <button
+            type="button"
+            className="absolute inset-0 cursor-default"
+            aria-label="Liste panelini kapat"
+            onClick={() => setIsMobileSidebarOpen(false)}
+          />
           <div
-            className={
-              mobileSidebarTab === "all"
-                || mobileSidebarTab === "rooms"
-                || mobileSidebarTab === "calls"
-                ? "relative h-full w-full overflow-hidden bg-[#f4f4f6]"
-                : "relative h-[min(62svh,450px)] w-full overflow-hidden rounded-t-[20px] bg-[#f4f4f6] shadow-2xl"
-            }
+            className={`relative z-10 mt-[18svh] h-[64svh] w-[46vw] min-w-[176px] max-w-[300px] overflow-hidden border-2 border-slate-300/70 bg-[#f4f4f6] shadow-2xl ${
+              mobileSidebarTab === "rooms" || mobileSidebarTab === "calls"
+                ? "rounded-r-[22px] border-l-0"
+                : "rounded-l-[22px] border-r-0"
+            }`}
           >
+            {(mobileSidebarTab === "room" || mobileSidebarTab === "all") ? (
+              <div className="absolute left-2 right-2 top-2 z-20 grid grid-cols-2 gap-1 rounded-xl border border-zinc-200 bg-white/95 p-1 shadow-sm">
+                <button type="button" onClick={() => setMobileSidebarTab("room")} className={`rounded-lg px-2 py-1.5 text-[10px] font-black ${mobileSidebarTab === "room" ? "bg-zinc-900 text-white" : "text-zinc-500"}`}>ODADAKİLER</button>
+                <button type="button" onClick={() => setMobileSidebarTab("all")} className={`rounded-lg px-2 py-1.5 text-[10px] font-black ${mobileSidebarTab === "all" ? "bg-zinc-900 text-white" : "text-zinc-500"}`}>TÜM KİŞİLER</button>
+              </div>
+            ) : null}
+            <div className={(mobileSidebarTab === "room" || mobileSidebarTab === "all") ? "h-full pt-12" : "h-full"}>
             <ChatSidebar
               users={roomUsers}
               forceVisible
@@ -4610,6 +4637,7 @@ function ChatPageContent({
               callHistory={callHistory}
               onDeleteCallHistory={deleteCallHistoryEntry}
             />
+            </div>
           </div>
         </div>
       ) : null}
@@ -8355,16 +8383,24 @@ export default function ChatPage() {
           }
 
           try {
-            const roomCheck = await withJoinFastFallback(
+            let roomCheck = await withJoinFastFallback(
               apiClient.rooms.checkRoomExists(roomDisplayName),
               1500,
             );
+            // Mobil URL slug'ında tire/boşluk dönüşümü gerçek oda adını bozabiliyor.
+            // İlk eşleşme bulunamazsa URL'deki decode edilmiş adı da dene.
+            if (roomCheck && roomCheck.exists === false && decodedSlug && decodedSlug !== roomDisplayName) {
+              roomCheck = await withJoinFastFallback(
+                apiClient.rooms.checkRoomExists(decodedSlug),
+                1500,
+              );
+            }
             const exists = roomCheck?.exists ?? true;
             const voiceRoomId = roomCheck?.voiceId || roomDisplayName;
 
             if (!exists) {
-              setJoinError("Oda bulunamadı");
-              return;
+              // Socket join yine de canonical oda anahtarını çözebilsin; erken yönlendirme yapma.
+              console.warn("Oda HTTP kontrolünde bulunamadı, socket çözümlemesi deneniyor:", roomDisplayName);
             }
             activeRoom = voiceRoomId;
             setRoomId(voiceRoomId);
@@ -10584,31 +10620,8 @@ export default function ChatPage() {
           globalAnnouncementTimerRef.current = null;
         }, 10000);
 
-        const normalized: Message = {
-          room: activeRoomId || activeRoom || roomDisplayName,
-          username: "Sistem Mesajı",
-          message,
-          gender: "male",
-          isGuest: false,
-          timestamp: data?.timestamp || new Date().toISOString(),
-          isSystemMessage: data?.isSystemMessage !== false,
-          systemStyle: "announcement",
-        };
-
-        setMessages((prev) => {
-          const isDuplicate = prev.some(
-            (msg) =>
-              msg.isSystemMessage &&
-              msg.username === normalized.username &&
-              msg.message === normalized.message &&
-              Math.abs(
-                new Date(msg.timestamp).getTime() -
-                  new Date(normalized.timestamp).getTime(),
-              ) < 5000,
-          );
-          if (isDuplicate) return prev;
-          return [...prev, normalized];
-        });
+        // ChatsON global duyurusu normal sohbet geçmişine eklenmez.
+        // Sistem mesajı satırından bağımsız, yalnızca üst duyuru bandında gösterilir.
       },
     );
 

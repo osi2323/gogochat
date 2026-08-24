@@ -8469,24 +8469,11 @@ const legacyUserGifAliases: Record<string, string> = {
       (room) => !specialNames.has(normalizeRoomName(room.name)),
     );
 
-    const renderRoomImage = (room: Room, className: string) => {
-      const roomImageUrl = getRoomLogoUrl(room.logo, room.updatedAt);
-      if (roomImageUrl) {
-        return (
-          <img
-            src={roomImageUrl}
-            alt={room.name}
-            className={className}
-            draggable={false}
-          />
-        );
-      }
-      return (
-        <div className={`${className} flex items-center justify-center bg-linear-to-br from-blue-500 to-purple-600 text-sm font-bold text-white`}>
-          {room.name.substring(0, 2).toUpperCase()}
-        </div>
-      );
-    };
+    const renderRoomImage = (_room: Room, className: string) => (
+      <div className={`${className} flex items-center justify-center bg-zinc-100 text-zinc-500`}>
+        <MessageSquare className="h-4 w-4" />
+      </div>
+    );
     const getMobileFriendPresence = (item: FriendRequest) => {
       const liveUser = activeTenantUsers.find(
         (user) =>

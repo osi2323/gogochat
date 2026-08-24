@@ -27,6 +27,7 @@ import {
   Image,
   ChevronUp,
   Users,
+  UserRound,
   ShieldCheck,
   Globe,
   X,
@@ -247,6 +248,7 @@ export const ChatInput = ({
   );
   const [isRadioPlaying, setIsRadioPlaying] = useState(false);
   const [showAnimationPicker, setShowAnimationPicker] = useState(false);
+  const [mobileMediaPickerTab, setMobileMediaPickerTab] = useState<"emoji" | "animation">("emoji");
   const [showRadioRequestModal, setShowRadioRequestModal] = useState(false);
   const [radioRequestUrl, setRadioRequestUrl] = useState<string | null>(null);
   const [isRadioRequestIframeError, setIsRadioRequestIframeError] =
@@ -2244,7 +2246,7 @@ export const ChatInput = ({
     sendBlockedReasonLower.includes("sonra");
 
   return (
-    <div className="chat-theme-input relative inset-auto z-[90] border-t-2 border-[#e7e0d2] bg-[#fffdf8] px-2.5 py-2 pb-[calc(env(safe-area-inset-bottom)+0.55rem)] shadow-[0_-10px_30px_rgba(0,0,0,0.14)] md:z-[80] md:border-t md:border-zinc-200 md:bg-white md:px-4 md:py-3">
+    <div className="chat-theme-input relative inset-auto z-[90] border-t-2 border-[#d7cdbd] bg-[#fffdf8] text-zinc-950 px-2.5 py-2 pb-[calc(env(safe-area-inset-bottom)+0.55rem)] shadow-[0_-10px_30px_rgba(0,0,0,0.14)] md:z-[80] md:border-t md:border-zinc-200 md:bg-white md:px-4 md:py-3">
       {/* Reply Preview */}
       {replyTo && (
         <div className="mb-2 flex items-center gap-2 rounded-lg bg-blue-50 border-l-4 border-blue-500 px-3 py-2">
@@ -2709,50 +2711,36 @@ export const ChatInput = ({
         </div>
       )}
 
-      {/* Animation Picker */}
-      {showAnimationPicker && (
-        <div
-          ref={animationPickerRef}
-          className="absolute bottom-full left-2 mb-1.5 z-50 md:left-4 md:mb-2"
-        >
-          <AnimationPicker onAnimationSelect={handleAnimationSelect} />
-        </div>
-      )}
-
-      {showEmojiPicker && (
+      {(showEmojiPicker || showAnimationPicker) && (
         <div
           ref={emojiPickerRef}
-          className="absolute bottom-full left-2 mb-1.5 z-50 md:left-4 md:mb-2"
+          className="absolute bottom-full left-2 z-50 mb-1.5 w-[min(92vw,360px)] overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-2xl md:left-4 md:mb-2"
         >
-          <MsnEmojiPicker
-            onEmojiSelect={(emojiUrl) => {
-              // Send emoji as image
-              handleAnimationSelect(emojiUrl);
-              setShowEmojiPicker(false);
-            }}
-          />
+          <div className="grid grid-cols-3 gap-1 border-b border-zinc-200 bg-zinc-50 p-1.5">
+            <button type="button" onClick={() => { setMobileMediaPickerTab("emoji"); setShowEmojiPicker(true); setShowAnimationPicker(false); }} className={`rounded-xl px-2 py-2 text-[11px] font-black ${mobileMediaPickerTab === "emoji" ? "bg-zinc-900 text-white" : "text-zinc-600"}`}>EMOJİ</button>
+            <button type="button" onClick={() => { setMobileMediaPickerTab("animation"); setShowAnimationPicker(true); setShowEmojiPicker(false); }} className={`rounded-xl px-2 py-2 text-[11px] font-black ${mobileMediaPickerTab === "animation" ? "bg-violet-600 text-white" : "text-zinc-600"}`}>ANİMASYON</button>
+            <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("chatson:open-mobile-friends"))} className="rounded-xl px-2 py-2 text-[11px] font-black text-cyan-700 hover:bg-cyan-50">ARKADAŞLAR</button>
+          </div>
+          <div className="max-h-[42svh] overflow-auto">
+            {mobileMediaPickerTab === "animation" ? (
+              <AnimationPicker onAnimationSelect={handleAnimationSelect} />
+            ) : (
+              <MsnEmojiPicker
+                onEmojiSelect={(emojiUrl) => {
+                  handleAnimationSelect(emojiUrl);
+                  setShowEmojiPicker(false);
+                }}
+              />
+            )}
+          </div>
         </div>
       )}
       <div className="chat-theme-toolbar flex min-h-12 items-center gap-1.5 md:h-auto md:flex-wrap md:gap-2">
         {/* Sol taraf - Dosya ve Emoji */}
         <button
-          ref={animationButtonRef}
-          type="button"
-          onClick={() => setShowAnimationPicker(!showAnimationPicker)}
-          className={`order-3 h-7 w-7 shrink-0 items-center justify-center text-zinc-700 transition-colors hover:text-zinc-950 md:order-none md:flex md:h-10 md:w-10 md:rounded-lg md:bg-blue-500 md:hover:bg-blue-600 ${
-            isMobileTypingMode ? "hidden" : "flex"
-          } ${
-            showAnimationPicker ? "text-white md:ring-2 md:ring-blue-300" : ""
-          }`}
-          title="Gif atma"
-        >
-          <Bookmark className="h-6 w-6 stroke-[1.8] md:hidden" />
-          <FileText className="hidden h-5 w-5 md:block" />
-        </button>
-        <button
           ref={buttonRef}
           type="button"
-          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          onClick={() => { setMobileMediaPickerTab("emoji"); setShowAnimationPicker(false); setShowEmojiPicker(!showEmojiPicker); }}
           className={`order-1 flex h-7 w-7 shrink-0 items-center justify-center text-zinc-700 transition-colors hover:text-zinc-950 md:order-none md:h-10 md:w-10 md:text-zinc-600 md:hover:text-zinc-900 ${
             showEmojiPicker
               ? "text-white md:rounded-lg md:bg-zinc-100 md:text-zinc-900"

@@ -26,6 +26,7 @@ type RoomForm = {
   description: string;
   maxUsers: number;
   visibleUserCount: number;
+  microphoneLimit: number;
   isPrivate: boolean;
   password: string;
   radioPanelLink: string;
@@ -69,6 +70,7 @@ export const RoomsView = ({
       description: "",
       maxUsers: 200,
       visibleUserCount: 15,
+      microphoneLimit: 5,
       isPrivate: false,
       // isEditable backend default true, gönderilmiyor
       password: "",
@@ -212,6 +214,7 @@ export const RoomsView = ({
       description: room.description ?? "",
       maxUsers: room.maxUsers ?? 0,
       visibleUserCount: room.visibleUserCount ?? 0,
+      microphoneLimit: room.microphoneLimit ?? 5,
       isPrivate: room.isPrivate ?? false,
       // isEditable backend default true, gönderilmiyor
       password: "",
@@ -343,6 +346,7 @@ export const RoomsView = ({
       appendIfPresent("description", form.description);
       appendIfPresent("maxUsers", form.maxUsers);
       appendIfPresent("visibleUserCount", form.visibleUserCount);
+      appendIfPresent("microphoneLimit", form.microphoneLimit);
       if (canEncryptRooms) {
         appendIfPresent("isPrivate", form.isPrivate);
         appendIfPresent("password", form.password);
@@ -411,6 +415,11 @@ export const RoomsView = ({
       "visibleUserCount",
       form.visibleUserCount,
       selectedRoom.visibleUserCount,
+    );
+    appendIfChanged(
+      "microphoneLimit",
+      form.microphoneLimit,
+      selectedRoom.microphoneLimit,
     );
     if (canEncryptRooms) {
       appendIfChanged("isPrivate", form.isPrivate, selectedRoom.isPrivate);
@@ -801,6 +810,19 @@ export const RoomsView = ({
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-zinc-700 ml-1">
+                        MİKROFON SINIRI
+                      </label>
+                      <input
+                        type="number"
+                        min={1}
+                        max={20}
+                        className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
+                        value={form.microphoneLimit}
+                        onChange={(e) => handleChange("microphoneLimit", Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-zinc-700 ml-1">
                         LİSTE SIRASI
                       </label>
                       <input
@@ -967,17 +989,6 @@ export const RoomsView = ({
                           />
                         </div>
                       </div>
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-zinc-700 ml-1">
-                          LOGO LİNKİ (OPSİYONEL)
-                        </label>
-                        <input
-                          className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 focus:bg-white focus:border-blue-500 transition-all outline-none"
-                          value={form.logo ?? ""}
-                          onChange={(e) => handleChange("logo", e.target.value)}
-                          placeholder="https://example.com/logo.png"
-                        />
-                      </div>
                     </div>
                     <div className="space-y-2.5 sm:space-y-3">
                       <div className="space-y-1.5">
@@ -1024,50 +1035,7 @@ export const RoomsView = ({
                           />
                         </div>
                       </div>
-                      <div className="space-y-1.5">
-                        <div className="flex items-center justify-between ml-1">
-                          <label className="text-xs font-bold text-zinc-700">
-                            LOGO YÜKLE
-                          </label>
-                          {form.logo && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                handleChange("logo", "");
-                                handleChange("logoFile", null);
-                              }}
-                              className="text-xs text-red-500 hover:text-red-700 font-semibold transition-colors"
-                            >
-                              Kaldır
-                            </button>
-                          )}
-                        </div>
-                        {form.logo && (
-                          <div className="relative w-full h-20 rounded-xl overflow-hidden border border-zinc-200 bg-zinc-100 flex items-center justify-center">
-                            <img
-                              src={
-                                form.logo.startsWith("http")
-                                  ? form.logo
-                                  : `${(process.env.NEXT_PUBLIC_IMAGE_ACCESS_URL ?? "").replace(/\/$/, "")}/${form.logo.replace(/^\/+/, "")}`
-                              }
-                              alt="Oda logosu"
-                              className="max-h-full max-w-full object-contain"
-                            />
-                          </div>
-                        )}
-                        <div className="relative group">
-                          <input
-                            type="file"
-                            className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100 cursor-pointer"
-                            onChange={(e) =>
-                              handleChange(
-                                "logoFile",
-                                e.target.files?.[0] ?? null,
-                              )
-                            }
-                          />
-                        </div>
-                      </div>
+                      
                     </div>
                   </div>
                 </div>
