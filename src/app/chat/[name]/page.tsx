@@ -1233,14 +1233,26 @@ function ChatPageContent({
   >("room");
 
   useEffect(() => {
-    const openFriends = () => {
+    const openMobileUtility = (tab: "wall" | "friends" | "calls") => {
       setCloseMobileSidebarOnProfileClose(false);
       setMobileInitialSelectedUser(null);
-      setMobileSidebarTab("friends");
+      setMobileSidebarTab(tab);
       setIsMobileSidebarOpen(true);
     };
+
+    const openWall = () => openMobileUtility("wall");
+    const openFriends = () => openMobileUtility("friends");
+    const openCalls = () => openMobileUtility("calls");
+
+    window.addEventListener("chatson:open-mobile-wall", openWall);
     window.addEventListener("chatson:open-mobile-friends", openFriends);
-    return () => window.removeEventListener("chatson:open-mobile-friends", openFriends);
+    window.addEventListener("chatson:open-mobile-calls", openCalls);
+
+    return () => {
+      window.removeEventListener("chatson:open-mobile-wall", openWall);
+      window.removeEventListener("chatson:open-mobile-friends", openFriends);
+      window.removeEventListener("chatson:open-mobile-calls", openCalls);
+    };
   }, []);
   const [sidebarCounts, setSidebarCounts] = useState({
     roomUsersCount: 0,
@@ -4549,9 +4561,9 @@ function ChatPageContent({
       {isMobileSidebarOpen ? (
         <div
           className={`fixed inset-0 z-[140] flex md:hidden ${
-            mobileSidebarTab === "rooms" || mobileSidebarTab === "calls"
-              ? "items-stretch justify-start bg-black/25"
-              : "items-stretch justify-end bg-black/25"
+            mobileSidebarTab === "rooms"
+              ? "items-stretch justify-start bg-black/20"
+              : "items-stretch justify-end bg-black/20"
           }`}
         >
           <button
@@ -4561,14 +4573,14 @@ function ChatPageContent({
             onClick={() => setIsMobileSidebarOpen(false)}
           />
           <div
-            className={`relative z-10 mt-[18svh] h-[64svh] w-[46vw] min-w-[176px] max-w-[300px] overflow-hidden border-2 border-slate-300/70 bg-[#f4f4f6] shadow-2xl ${
-              mobileSidebarTab === "rooms" || mobileSidebarTab === "calls"
-                ? "rounded-r-[22px] border-l-0"
-                : "rounded-l-[22px] border-r-0"
+            className={`relative z-10 h-[100dvh] w-[44vw] min-w-[150px] max-w-[250px] overflow-hidden border-2 border-slate-300/70 bg-[#f4f4f6] shadow-2xl ${
+              mobileSidebarTab === "rooms"
+                ? "rounded-r-[20px] border-l-0"
+                : "rounded-l-[20px] border-r-0"
             }`}
           >
             {(mobileSidebarTab === "room" || mobileSidebarTab === "all") ? (
-              <div className="absolute left-2 right-2 top-2 z-20 grid grid-cols-2 gap-1 rounded-xl border border-zinc-200 bg-white/95 p-1 shadow-sm">
+              <div className="absolute left-2 right-2 top-3 z-20 grid grid-cols-2 gap-1.5 rounded-xl border border-zinc-200 bg-white/95 p-1.5 shadow-sm">
                 <button type="button" onClick={() => setMobileSidebarTab("room")} className={`rounded-lg px-2 py-1.5 text-[10px] font-black ${mobileSidebarTab === "room" ? "bg-zinc-900 text-white" : "text-zinc-500"}`}>ODADAKİLER</button>
                 <button type="button" onClick={() => setMobileSidebarTab("all")} className={`rounded-lg px-2 py-1.5 text-[10px] font-black ${mobileSidebarTab === "all" ? "bg-zinc-900 text-white" : "text-zinc-500"}`}>TÜM KİŞİLER</button>
               </div>
@@ -4581,8 +4593,12 @@ function ChatPageContent({
               mobileRoomOnly={mobileSidebarTab === "room"}
               mobileAllUsersFullscreen={mobileSidebarTab === "all"}
               mobileRoomsFullscreen={
-                mobileSidebarTab === "rooms" || mobileSidebarTab === "calls"
+                mobileSidebarTab === "rooms" ||
+                mobileSidebarTab === "wall" ||
+                mobileSidebarTab === "friends" ||
+                mobileSidebarTab === "calls"
               }
+              mobileRoomsOnly={mobileSidebarTab === "rooms"}
               onMobileRoomClose={() => {
                 setIsMobileSidebarOpen(false);
                 setMobileInitialSelectedUser(null);
