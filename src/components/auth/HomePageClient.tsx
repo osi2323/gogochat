@@ -472,7 +472,83 @@ const StandardLoginPage = ({
             </div>
 
             <div className="mx-auto flex max-w-[720px] flex-col items-center lg:mx-0 lg:items-start">
-              <div className="lg:hidden bg-gradient-to-r from-violet-200 via-cyan-200 to-white bg-clip-text text-lg font-black text-transparent">ChatsON</div>
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt={siteName}
+                  className="mb-5 hidden max-h-24 max-w-[290px] object-contain drop-shadow-[0_16px_34px_rgba(0,0,0,0.45)] sm:max-h-28 sm:max-w-[350px] lg:block"
+                />
+              ) : (
+                <div className="mb-5 hidden items-center gap-4 lg:flex">
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-[22px] border border-violet-400/30 bg-gradient-to-br from-violet-500/30 via-blue-500/20 to-cyan-400/15 shadow-[0_0_34px_rgba(124,58,237,0.25)] sm:h-20 sm:w-20">
+                    <span className="bg-gradient-to-r from-violet-200 via-cyan-200 to-white bg-clip-text text-2xl font-black text-transparent sm:text-3xl">
+                      KM
+                    </span>
+                  </div>
+                  <div className="text-left">
+                    <div className="text-[30px] font-black tracking-[-0.04em] text-white sm:text-[42px]">
+                      {siteName}
+                    </div>
+                    <div className="text-xs font-bold uppercase tracking-[0.22em] text-cyan-300/80">
+                      Live social network
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <h1 className="max-w-[680px] text-[clamp(2.2rem,6vw,5.3rem)] font-black leading-[0.94] tracking-[-0.055em] text-white">
+                Sohbetin daha
+                <span className="block bg-gradient-to-r from-violet-300 via-sky-300 to-emerald-200 bg-clip-text text-transparent">
+                  canlı hali.
+                </span>
+              </h1>
+              <p className="mt-5 max-w-[600px] text-sm font-medium leading-6 text-slate-400 sm:text-base sm:leading-7">
+                Yazılı sohbet, canlı ses, odalar ve yeni insanlarla tanışma tek bir modern deneyimde. Rumuzunu seç, odana geç ve sohbete katıl.
+              </p>
+
+              <div className="mt-7 grid w-full max-w-[620px] grid-cols-3 gap-2 sm:gap-3">
+                {[
+                  { icon: <MessageCircle className="h-5 w-5" />, title: "Canlı Chat", text: "Anlık mesajlaşma" },
+                  { icon: <Mic className="h-5 w-5" />, title: "Sesli Odalar", text: "Canlı mikrofon" },
+                  { icon: <ShieldCheck className="h-5 w-5" />, title: "Kontrollü", text: "Yetkili yönetimi" },
+                ].map((item) => (
+                  <div
+                    key={item.title}
+                    className="rounded-2xl border border-white/10 bg-white/[0.045] p-3 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl sm:p-4"
+                  >
+                    <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-300/15 bg-cyan-300/10 text-cyan-200">
+                      {item.icon}
+                    </div>
+                    <div className="text-xs font-black text-slate-100 sm:text-sm">{item.title}</div>
+                    <div className="mt-0.5 hidden text-[11px] font-medium text-slate-500 sm:block">{item.text}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="order-1 mx-auto w-full max-w-[520px] lg:order-2">
+            <div className="relative rounded-[32px] bg-gradient-to-br from-violet-400/50 via-cyan-300/25 to-emerald-300/20 p-px shadow-[0_34px_90px_rgba(0,0,0,0.55)]">
+              <div className="relative overflow-hidden rounded-[31px] border border-white/5 bg-[#0a1220]/94 px-4 py-4 backdrop-blur-2xl sm:px-8 sm:py-8">
+                <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-violet-500/12 blur-3xl" />
+                <div className="absolute -bottom-20 -left-16 h-44 w-44 rounded-full bg-cyan-400/10 blur-3xl" />
+
+                <div className="relative mb-5">
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <div className="flex h-12 min-w-12 items-center justify-center rounded-2xl border-2 border-red-300/25 bg-red-500/10 px-3 text-[25px] shadow-[0_0_24px_rgba(239,68,68,0.10)]" title="Türkiye">
+                      🇹🇷
+                    </div>
+                    {logoUrl ? (
+                      <img
+                        src={logoUrl}
+                        alt={siteName}
+                        className="max-h-16 max-w-[210px] object-contain drop-shadow-[0_12px_28px_rgba(0,0,0,0.45)] lg:hidden"
+                      />
+                    ) : (
+                      <div className="lg:hidden bg-gradient-to-r from-violet-200 via-cyan-200 to-white bg-clip-text text-xl font-black text-transparent">
+                        ChatsON
+                      </div>
+                    )}
                     <LoginOnlineCounter />
                   </div>
                   <div>
