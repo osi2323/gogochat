@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { HomePageHtmlBlock } from "@/components/auth/HomePageHtmlBlock";
 import LoginForm from "@/components/auth/LoginForm";
 import { HomeAuthCheck } from "@/components/auth/HomeAuthCheck";
@@ -14,6 +14,9 @@ import type {
   MaintenanceModeSettings,
 } from "@/services/systemSettingsService";
 import {
+  Activity,
+  Crown,
+  ShieldCheck,
   Apple,
   ChevronDown,
   CircleAlert,
@@ -33,9 +36,11 @@ import {
   Wrench,
 } from "lucide-react";
 import { env } from "@/config/env";
+import { io } from "socket.io-client";
+import { getClientApiClient } from "@/lib/api/clientApi";
 
 const resolveSiteName = (siteName?: string | null) =>
-  siteName?.trim() ? siteName.trim() : "KingMobile";
+  siteName?.trim() ? siteName.trim() : "ChatsON";
 
 const resolvePremiumText = (
   value: string | null | undefined,
@@ -58,7 +63,7 @@ const resolvePremiumStoreUrl = (value: string | null | undefined) => {
   return trimmedValue;
 };
 
-const PREMIUM_FOOTER_BRAND = "Kingmobil";
+const PREMIUM_FOOTER_BRAND = "ChatsON";
 
 const extractFirstElementBackground = (
   html: string | null | undefined,
@@ -217,6 +222,223 @@ const syncBodyBackground = (
   };
 };
 
+
+type PublicRosterUser = {
+  id: number;
+  username: string;
+  icon?: string | null;
+  roleName?: string | null;
+  starCount?: number | null;
+  starColor?: string | null;
+};
+
+type PublicRosterState = {
+  siteOwners: PublicRosterUser[];
+  managers: PublicRosterUser[];
+  onlineNames: Set<string>;
+  onlineCount: number;
+};
+
+const normalizePublicName = (value?: string | null) =>
+  String(value || "").trim().toLocaleLowerCase("tr-TR");
+
+const usePublicRoster = (): PublicRosterState => {
+  const [siteOwners, setSiteOwners] = useState<PublicRosterUser[]>([]);
+  const [managers, setManagers] = useState<PublicRosterUser[]>([]);
+  const [onlineNames, setOnlineNames] = useState<Set<string>>(new Set());
+  const [onlineCount, setOnlineCount] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadRoster = async () => {
+      try {
+        const response = await getClientApiClient().get(
+          "/system-settings/public-header-roster",
+          { params: { _ts: Date.now() } },
+        );
+        if (cancelled) return;
+        setSiteOwners(Array.isArray(response.data?.siteOwners) ? response.data.siteOwners : []);
+        setManagers(Array.isArray(response.data?.managers) ? response.data.managers : []);
+      } catch (error) {
+        console.error("Login yönetim vitrini alınamadı:", error);
+      }
+    };
+
+    void loadRoster();
+    const rosterTimer = window.setInterval(() => void loadRoster(), 30000);
+
+    const socketUrl =
+      process.env.NEXT_PUBLIC_SOCKET_URL || "https://king.akdenizbirlik.com";
+    const socket = io(socketUrl, {
+      transports: ["websocket", "polling"],
+      autoConnect: true,
+      reconnection: true,
+    });
+
+    const tenantId = env.tenantId ? `tenant_${env.tenantId}` : "tenant_master";
+    const normalizedTenantId = tenantId.replace(/^tenant_/, "");
+
+    const handleCount = (data: {
+      tenantId?: string;
+      count?: number;
+      users?: Array<{ username?: string | null }>;
+    }) => {
+      if (
+        String(data?.tenantId || "").replace(/^tenant_/, "") !==
+        normalizedTenantId
+      ) {
+        return;
+      }
+      const names = new Set(
+        (Array.isArray(data.users) ? data.users : [])
+          .map((user) => normalizePublicName(user?.username))
+          .filter(Boolean),
+      );
+      setOnlineNames(names);
+      // backend count botları da içeriyor; users listesi gelmezse count'u koru
+      setOnlineCount(Math.max(0, Number(data.count ?? names.size) || 0));
+    };
+
+    const requestCount = () => {
+      if (socket.connected) {
+        socket.emit("tenant:getActiveUserCount", { tenantId });
+      }
+    };
+
+    socket.on("tenant:activeUserCount", handleCount);
+    socket.on("connect", requestCount);
+    const countTimer = window.setInterval(requestCount, 5000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(rosterTimer);
+      window.clearInterval(countTimer);
+      socket.off("tenant:activeUserCount", handleCount);
+      socket.off("connect", requestCount);
+      socket.disconnect();
+    };
+  }, []);
+
+  return useMemo(
+    () => ({ siteOwners, managers, onlineNames, onlineCount }),
+    [siteOwners, managers, onlineNames, onlineCount],
+  );
+};
+
+const LoginRosterStrip = () => {
+  const { siteOwners, managers, onlineNames, onlineCount } = usePublicRoster();
+
+  const renderCard = (
+    user: PublicRosterUser,
+    type: "owner" | "manager",
+  ) => {
+    const isOwner = type === "owner";
+    const isOnline = onlineNames.has(normalizePublicName(user.username));
+    const avatar = resolveUrl(user.icon);
+
+    return (
+      <div
+        key={`${type}-${user.id}-${user.username}`}
+        className={`group flex min-w-0 items-center gap-3 rounded-2xl border-2 px-3 py-2.5 shadow-[0_12px_30px_rgba(0,0,0,0.22)] ${
+          isOwner
+            ? "border-amber-300/45 bg-gradient-to-r from-amber-300/12 via-amber-100/[0.04] to-transparent"
+            : "border-cyan-300/30 bg-gradient-to-r from-cyan-300/10 via-sky-300/[0.04] to-transparent"
+        }`}
+      >
+        <div
+          className={`relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 bg-[#0d1727] text-base font-black ${
+            isOwner
+              ? "border-amber-300/55 text-amber-100 shadow-[0_0_24px_rgba(251,191,36,0.16)]"
+              : "border-cyan-300/40 text-cyan-100 shadow-[0_0_22px_rgba(34,211,238,0.12)]"
+          }`}
+        >
+          {avatar ? (
+            <img src={avatar} alt="" className="h-full w-full object-cover" />
+          ) : (
+            user.username.slice(0, 1).toUpperCase()
+          )}
+          <span
+            className={`absolute bottom-1 right-1 h-3 w-3 rounded-full border-2 border-[#0d1727] ${
+              isOnline ? "bg-emerald-400" : "bg-slate-500"
+            }`}
+          />
+        </div>
+        <div className="min-w-0">
+          <div
+            className={`truncate text-sm font-black tracking-tight ${
+              isOwner ? "text-amber-100" : "text-cyan-50"
+            }`}
+          >
+            {user.username}
+          </div>
+          <div
+            className={`mt-0.5 text-[9px] font-black uppercase tracking-[0.16em] ${
+              isOnline ? "text-emerald-400" : "text-slate-500"
+            }`}
+          >
+            {isOnline ? "Çevrimiçi" : "Çevrimdışı"}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="mt-6 space-y-4 border-t-2 border-white/10 pt-5">
+      <div className="flex items-center justify-between rounded-2xl border-2 border-emerald-300/25 bg-emerald-400/[0.07] px-4 py-3 shadow-[0_0_30px_rgba(16,185,129,0.08)]">
+        <div>
+          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-emerald-300">
+            <Activity className="h-4 w-4" />
+            ChatsON Canlı
+          </div>
+          <div className="mt-1 text-xs font-bold text-slate-400">
+            Botlar dahil anlık site çevrimiçi sayısı
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="text-3xl font-black leading-none text-white">{onlineCount}</div>
+          <div className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-emerald-300">
+            Online
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-amber-300">
+          <Crown className="h-4 w-4" />
+          Site Sahipleri
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {siteOwners.length > 0 ? (
+            siteOwners.map((user) => renderCard(user, "owner"))
+          ) : (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3 text-xs font-bold text-slate-500">
+              Site sahibi listesi henüz eklenmedi.
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div>
+        <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">
+          <ShieldCheck className="h-4 w-4" />
+          Yönetici Listesi
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {managers.length > 0 ? (
+            managers.map((user) => renderCard(user, "manager"))
+          ) : (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3 text-xs font-bold text-slate-500">
+              Yönetici listesi henüz eklenmedi.
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const StandardLoginPage = ({
   siteName,
   homePageHtml,
@@ -249,7 +471,7 @@ const StandardLoginPage = ({
       </div>
 
       <section className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1280px] items-center px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
-        <div className="grid w-full items-center gap-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(390px,0.88fr)] lg:gap-12">
+        <div className="grid w-full items-center gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(430px,0.95fr)] lg:gap-12">
           <div className="order-2 text-center lg:order-1 lg:text-left">
             <div className="mx-auto mb-6 flex w-fit items-center gap-3 rounded-full border border-white/10 bg-white/[0.045] px-4 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-xl lg:mx-0">
               <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,0.9)]" />
@@ -314,7 +536,7 @@ const StandardLoginPage = ({
             </div>
           </div>
 
-          <div className="order-1 mx-auto w-full max-w-[470px] lg:order-2">
+          <div className="order-1 mx-auto w-full max-w-[520px] lg:order-2">
             <div className="relative rounded-[32px] bg-gradient-to-br from-violet-400/50 via-cyan-300/25 to-emerald-300/20 p-px shadow-[0_34px_90px_rgba(0,0,0,0.55)]">
               <div className="relative overflow-hidden rounded-[31px] border border-white/5 bg-[#0a1220]/94 px-5 py-6 backdrop-blur-2xl sm:px-8 sm:py-8">
                 <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-violet-500/12 blur-3xl" />
@@ -341,7 +563,11 @@ const StandardLoginPage = ({
                   <LoginForm variant="standard" compact hideHeader />
                 </div>
 
-                <div className="relative mt-6 flex items-center justify-center gap-2 border-t border-white/7 pt-5 text-[10px] font-bold uppercase tracking-[0.17em] text-slate-600">
+                <div className="relative">
+                  <LoginRosterStrip />
+                </div>
+
+                <div className="relative mt-6 flex items-center justify-center gap-2 border-t border-white/10 pt-5 text-[10px] font-black uppercase tracking-[0.17em] text-slate-500">
                   <Lock className="h-3.5 w-3.5" />
                   Güvenli oturum
                 </div>

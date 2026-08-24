@@ -3638,7 +3638,7 @@ function ChatPageContent({
     if (typeof window === "undefined") return;
 
     const shareUrl = window.location.href;
-    const text = `KingMobile sohbetine katıl: ${shareUrl}`;
+    const text = `ChatsON sohbetine katıl: ${shareUrl}`;
     window.open(
       `https://wa.me/?text=${encodeURIComponent(text)}`,
       "_blank",
@@ -4035,7 +4035,7 @@ function ChatPageContent({
 
   const desktopOnlineCount = onlinePresenceUsers.length;
   const desktopHeaderLogo = resolveAvatarUrl(headerRoster.chatHeaderLogo);
-  const desktopSiteName = headerRoster.siteName?.trim() || "KingMobile";
+  const desktopSiteName = headerRoster.siteName?.trim() || "ChatsON";
 
   const openDesktopRoom = useCallback(
     (room: Room) => {
@@ -4127,7 +4127,8 @@ function ChatPageContent({
           .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .kingmobile-panel-card,
           .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .kingmobile-room-button,
           .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .chat-theme-user-card {
-            box-shadow: 0 8px 22px rgba(15,23,42,0.08), inset 0 0 0 1px color-mix(in srgb, var(--chat-border) 55%, transparent);
+            border-width: 2px !important;
+            box-shadow: 0 10px 28px rgba(15,23,42,0.12), inset 0 0 0 1px color-mix(in srgb, var(--chat-border) 78%, transparent);
           }
           .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .kingmobile-topbar,
           .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .kingmobile-roombar,
@@ -4137,7 +4138,17 @@ function ChatPageContent({
           .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .kingmobile-topbar,
           .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .kingmobile-right-panel,
           .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .chat-theme-sidebar-content {
-            font-weight: 550;
+            font-weight: 650;
+          }
+          .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .kingmobile-topbar,
+          .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .kingmobile-roombar,
+          .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .kingmobile-right-panel,
+          .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .chat-theme-sidebar {
+            border-width: 2px !important;
+          }
+          .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .text-slate-400,
+          .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .text-slate-500 {
+            font-weight: 650;
           }
           .kingmobile-desktop-shell .kingmobile-right-panel::-webkit-scrollbar { width: 6px; }
           .kingmobile-desktop-shell .kingmobile-right-panel::-webkit-scrollbar-thumb { background: #27364b; border-radius: 999px; }
@@ -4146,25 +4157,24 @@ function ChatPageContent({
 
       <div className="kingmobile-topbar absolute inset-x-0 top-0 z-40 hidden h-[160px] border-b border-slate-800/90 bg-[#060d17]/98 text-white shadow-[0_16px_44px_rgba(0,0,0,0.42)] backdrop-blur-xl md:block">
         <div className="flex h-[100px] items-center gap-3 overflow-hidden border-b border-slate-800/90 px-4 pr-[400px]">
-          <div className="flex min-w-[210px] max-w-[250px] shrink-0 items-center gap-3 pr-2">
-            <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[18px] border border-violet-400/30 bg-gradient-to-br from-violet-600/25 via-blue-500/15 to-cyan-400/10 shadow-[0_0_30px_rgba(124,58,237,0.20)]">
+          <div className="flex w-[310px] shrink-0 items-center pr-3">
+            <div className="relative flex h-[72px] w-full items-center justify-center overflow-hidden rounded-[22px] border-2 border-violet-400/35 bg-gradient-to-br from-violet-600/18 via-blue-500/10 to-cyan-400/10 px-5 shadow-[0_0_34px_rgba(124,58,237,0.18)]">
               {desktopHeaderLogo ? (
-                <img src={desktopHeaderLogo} alt={desktopSiteName} className="h-full w-full object-contain p-1.5" />
+                <img
+                  src={desktopHeaderLogo}
+                  alt={desktopSiteName}
+                  className="max-h-[58px] w-full object-contain"
+                />
               ) : (
-                <span className="bg-gradient-to-r from-amber-200 via-violet-300 to-cyan-300 bg-clip-text text-xl font-black text-transparent">KM</span>
+                <span className="bg-gradient-to-r from-amber-200 via-violet-300 to-cyan-300 bg-clip-text text-3xl font-black tracking-[-0.04em] text-transparent">
+                  ChatsON
+                </span>
               )}
-              <Crown className="absolute -right-1 -top-2 h-5 w-5 rotate-12 text-amber-300" />
-            </div>
-            <div className="min-w-0">
-              <div className="truncate text-[19px] font-black tracking-tight text-[var(--chat-text)]">{desktopSiteName}</div>
-              <div className="mt-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.13em] text-[var(--chat-muted)]">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_9px_rgba(52,211,153,0.9)]" />
-                Canlı sohbet
-              </div>
+              <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/60 to-transparent" />
             </div>
           </div>
 
-          <div className="w-fit min-w-[190px] max-w-[420px] shrink-0 rounded-2xl border border-amber-300/15 bg-gradient-to-r from-amber-300/[0.06] to-transparent px-3 py-2">
+          <div className="w-fit min-w-[210px] max-w-[460px] shrink-0 rounded-[20px] border-2 border-amber-300/30 bg-gradient-to-r from-amber-300/[0.10] via-amber-200/[0.04] to-transparent px-3.5 py-2.5 shadow-[0_10px_30px_rgba(251,191,36,0.08)]">
             <div className="mb-1.5 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-amber-300/90">
               <Crown className="h-3.5 w-3.5" />
               Site Sahipleri
@@ -4178,14 +4188,14 @@ function ChatPageContent({
                     key={`owner-${user.id}-${user.username}`}
                     type="button"
                     onClick={() => setProfileOpenRequest({ username: user.username, id: Date.now(), fallbackUser: user })}
-                    className="group flex shrink-0 items-center gap-2 rounded-xl border border-amber-300/20 bg-[var(--chat-card-bg)] px-2 py-1.5 text-left shadow-[0_6px_18px_rgba(0,0,0,0.12)] transition hover:-translate-y-0.5 hover:border-amber-300/50"
+                    className="group flex shrink-0 items-center gap-2.5 rounded-2xl border-2 border-amber-300/35 bg-[var(--chat-card-bg)] px-2.5 py-2 text-left shadow-[0_8px_24px_rgba(251,191,36,0.09)] transition hover:-translate-y-0.5 hover:border-amber-300/65"
                   >
-                    <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-amber-300/35 bg-slate-800 text-xs font-black text-amber-100 shadow-[0_0_16px_rgba(251,191,36,0.08)]">
+                    <span className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border-2 border-amber-300/50 bg-slate-800 text-xs font-black text-amber-100 shadow-[0_0_16px_rgba(251,191,36,0.08)]">
                       {avatar ? <img src={avatar} alt="" className="h-full w-full object-cover" /> : (user.displayUsername || user.username).slice(0, 1).toUpperCase()}
                       <span className={`absolute bottom-0.5 right-0.5 h-2.5 w-2.5 rounded-full border-2 border-slate-900 ${isOnline ? "bg-emerald-400" : "bg-slate-500"}`} />
                     </span>
                     <span className="min-w-0 pr-1">
-                      <span className="block max-w-[105px] truncate text-xs font-black text-[var(--chat-text)]">{user.displayUsername || user.agentNickname || user.username}</span>
+                      <span className="block max-w-[120px] truncate text-sm font-black tracking-tight text-amber-100">{user.displayUsername || user.agentNickname || user.username}</span>
                       <span className={`mt-0.5 block text-[9px] font-bold uppercase tracking-wide ${isOnline ? "text-emerald-400" : "text-[var(--chat-muted)]"}`}>{isOnline ? "Online" : "Offline"}</span>
                     </span>
                   </button>
@@ -4196,7 +4206,7 @@ function ChatPageContent({
             </div>
           </div>
 
-          <div className="relative flex h-[70px] w-[142px] shrink-0 flex-col items-center justify-center overflow-hidden rounded-2xl border border-emerald-300/20 bg-gradient-to-br from-emerald-500/10 via-cyan-500/5 to-transparent shadow-[0_0_26px_rgba(16,185,129,0.08)]">
+          <div className="relative flex h-[76px] w-[154px] shrink-0 flex-col items-center justify-center overflow-hidden rounded-[20px] border-2 border-emerald-300/30 bg-gradient-to-br from-emerald-500/10 via-cyan-500/5 to-transparent shadow-[0_0_26px_rgba(16,185,129,0.08)]">
             <div className="absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-emerald-300/70 to-transparent" />
             <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.18em] text-emerald-400/80">
               <Activity className="h-3.5 w-3.5" /> Canlı
@@ -4205,7 +4215,7 @@ function ChatPageContent({
             <div className="mt-1 text-[9px] font-bold uppercase tracking-[0.11em] text-[var(--chat-muted)]">Online kullanıcı</div>
           </div>
 
-          <div className="min-w-[230px] flex-1 overflow-hidden rounded-2xl border border-cyan-300/12 bg-gradient-to-r from-cyan-300/[0.04] to-transparent px-3 py-2">
+          <div className="min-w-[250px] flex-1 overflow-hidden rounded-[20px] border-2 border-cyan-300/25 bg-gradient-to-r from-cyan-300/[0.08] via-sky-300/[0.03] to-transparent px-3.5 py-2.5 shadow-[0_10px_28px_rgba(34,211,238,0.06)]">
             <div className="mb-1.5 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-300/90">
               <ShieldCheck className="h-3.5 w-3.5" />
               Yönetim Listesi
@@ -4219,14 +4229,14 @@ function ChatPageContent({
                     key={`manager-${user.id}-${user.username}`}
                     type="button"
                     onClick={() => setProfileOpenRequest({ username: user.username, id: Date.now(), fallbackUser: user })}
-                    className="group flex shrink-0 items-center gap-2 rounded-xl border border-cyan-300/15 bg-[var(--chat-card-bg)] px-2 py-1.5 text-left shadow-[0_6px_18px_rgba(0,0,0,0.10)] transition hover:-translate-y-0.5 hover:border-cyan-300/45"
+                    className="group flex shrink-0 items-center gap-2.5 rounded-2xl border-2 border-cyan-300/28 bg-[var(--chat-card-bg)] px-2.5 py-2 text-left shadow-[0_8px_24px_rgba(34,211,238,0.07)] transition hover:-translate-y-0.5 hover:border-cyan-300/55"
                   >
-                    <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/25 bg-slate-800 text-xs font-black text-cyan-100">
+                    <span className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border-2 border-cyan-300/40 bg-slate-800 text-xs font-black text-cyan-100">
                       {avatar ? <img src={avatar} alt="" className="h-full w-full object-cover" /> : (user.displayUsername || user.username).slice(0, 1).toUpperCase()}
                       <span className={`absolute bottom-0.5 right-0.5 h-2.5 w-2.5 rounded-full border-2 border-slate-900 ${isOnline ? "bg-emerald-400" : "bg-slate-500"}`} />
                     </span>
                     <span className="min-w-0 pr-1">
-                      <span className="block max-w-[92px] truncate text-xs font-black text-[var(--chat-text)]">{user.displayUsername || user.agentNickname || user.username}</span>
+                      <span className="block max-w-[110px] truncate text-sm font-black tracking-tight text-cyan-50">{user.displayUsername || user.agentNickname || user.username}</span>
                       <span className="mt-0.5 block text-[9px] font-bold text-violet-400">★ {Number(user.roleStarCount ?? 0)} · {isOnline ? "ONLINE" : "OFF"}</span>
                     </span>
                   </button>
@@ -4448,7 +4458,7 @@ function ChatPageContent({
             </div>
             <div className="min-w-0">
               <div className="truncate text-base font-black text-white">{roomDetail?.name || roomName}</div>
-              <div className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-slate-400">{roomDetail?.description || "KingMobile sohbet odası"}</div>
+              <div className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-slate-400">{roomDetail?.description || "ChatsON sohbet odası"}</div>
             </div>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
@@ -4499,6 +4509,24 @@ function ChatPageContent({
           ) : <div className="text-xs text-slate-500">Bu odada radyo bağlantısı tanımlı değil.</div>}
         </section>
       </aside>
+
+      <button
+        type="button"
+        onClick={() => {
+          setCloseMobileSidebarOnProfileClose(false);
+          setMobileInitialSelectedUser(null);
+          setMobileSidebarTab("rooms");
+          setIsMobileSidebarOpen(true);
+        }}
+        className="fixed right-0 top-1/2 z-[105] flex -translate-y-1/2 items-center gap-1 rounded-l-[18px] border-2 border-r-0 border-violet-300/35 bg-[#0a1220]/95 px-2.5 py-4 text-white shadow-[-8px_8px_28px_rgba(0,0,0,0.34)] backdrop-blur-xl transition active:scale-95 md:hidden"
+        aria-label="Oda listesini aç"
+        title="Odalar"
+      >
+        <UsersRound className="h-4 w-4 text-cyan-200" />
+        <span className="[writing-mode:vertical-rl] rotate-180 text-[9px] font-black uppercase tracking-[0.18em] text-slate-200">
+          Odalar
+        </span>
+      </button>
 
       {isMobileSidebarOpen ? (
         <div

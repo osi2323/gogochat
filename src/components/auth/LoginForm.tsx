@@ -372,14 +372,14 @@ const LoginForm = ({
 
           <div className="relative">
             <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.32em] text-amber-200/70">
-              Live voice
+              LIVE VOICE
             </p>
-            <h1 className="text-[clamp(2.35rem,11vw,4.65rem)] font-black leading-none text-[#f9fafb] drop-shadow-[0_14px_28px_rgba(0,0,0,0.45)]">
-              KingMobile
+            <h1 className="text-[clamp(2.05rem,9vw,4rem)] font-black leading-none tracking-[-0.04em] text-[#f9fafb] drop-shadow-[0_14px_28px_rgba(0,0,0,0.45)]">
+              ChatsON Elite System
             </h1>
             <div className="mx-auto mt-3 h-px w-28 bg-gradient-to-r from-transparent via-amber-200/85 to-transparent" />
             <p className="mx-auto mt-5 max-w-xs text-[15px] font-semibold leading-6 text-zinc-200 sm:text-lg">
-              Sesli sohbete bağlanılıyor...
+              ChatsON ağına güvenli bağlantı kuruluyor...
             </p>
           </div>
 
