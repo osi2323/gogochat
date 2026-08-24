@@ -27,6 +27,7 @@ import {
   Mic,
   Play,
   Settings,
+  ShieldCheck,
   Smartphone,
   UserRound,
   Wrench,
