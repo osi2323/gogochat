@@ -671,6 +671,7 @@ type ChatSidebarProps = {
   mobileRoomOnly?: boolean;
   mobileAllUsersFullscreen?: boolean;
   mobileRoomsFullscreen?: boolean;
+  mobileRoomsOnly?: boolean;
   onMobileRoomClose?: () => void;
   currentUserStarCount?: number;
   currentUserIsGuest?: boolean;
@@ -779,6 +780,7 @@ export const ChatSidebar = ({
   mobileRoomOnly = false,
   mobileAllUsersFullscreen = false,
   mobileRoomsFullscreen = false,
+  mobileRoomsOnly = false,
   onMobileRoomClose,
   currentUserStarCount = 0,
   currentUserIsGuest = false,
@@ -1357,6 +1359,10 @@ export const ChatSidebar = ({
 
   useEffect(() => {
     if (!mobileRoomsFullscreen) return;
+    if (mobileRoomsOnly) {
+      setMobileRoomsDirectoryTab("rooms");
+      return;
+    }
     if (
       defaultTab === "rooms" ||
       defaultTab === "wall" ||
@@ -1365,7 +1371,7 @@ export const ChatSidebar = ({
     ) {
       setMobileRoomsDirectoryTab(defaultTab);
     }
-  }, [defaultTab, mobileRoomsFullscreen]);
+  }, [defaultTab, mobileRoomsFullscreen, mobileRoomsOnly]);
 
   useEffect(() => {
     if (!mobileRoomsFullscreen) return;
@@ -9190,8 +9196,8 @@ const legacyUserGifAliases: Record<string, string> = {
                       onClick={() => handleRoomClick(room)}
                       className="flex flex-col items-center gap-1.5 rounded-xl bg-[#f4f4f6] pb-2 pt-2 active:scale-[0.98]"
                     >
-                      <div className="h-[40px] w-[40px] overflow-hidden rounded-full border-2 border-white bg-white shadow-sm ring-1 ring-zinc-200">
-                        {renderRoomImage(room, "h-full w-full object-cover")}
+                      <div className="flex h-[34px] w-[34px] items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-[#0a84ff]">
+                        <MessageSquare className="h-4 w-4" />
                       </div>
                       <span className="line-clamp-1 px-1 text-[11.5px] font-semibold text-[#0a84ff]">
                         {room.name}
@@ -9212,10 +9218,7 @@ const legacyUserGifAliases: Record<string, string> = {
                       onClick={() => handleRoomClick(room)}
                       className="flex h-[76px] w-full overflow-hidden rounded-[12px] bg-white text-left shadow-[0_2px_8px_rgba(0,0,0,0.04)] ring-1 ring-black/5 active:scale-[0.99]"
                     >
-                      <div className="h-[76px] w-[76px] shrink-0 overflow-hidden bg-zinc-100">
-                        {renderRoomImage(room, "h-full w-full object-cover")}
-                      </div>
-                      <div className="flex min-w-0 flex-1 flex-col justify-center px-3 py-1.5">
+                      <div className="flex min-w-0 flex-1 flex-col justify-center px-3 py-2">
                         <div className="flex items-center justify-between gap-2">
                           <div className="min-w-0 flex-1">
                             <h3 className="truncate text-[15px] font-black leading-tight tracking-tight text-[#0a84ff]">
@@ -9257,6 +9260,7 @@ const legacyUserGifAliases: Record<string, string> = {
           )}
         </div>
 
+        {!mobileRoomsOnly ? (
         <div className="absolute bottom-0 left-0 right-0 grid h-[58px] grid-cols-4 border-t border-zinc-200 bg-white/95 pb-[env(safe-area-inset-bottom)]">
           {[
             { key: "rooms", label: "Tüm Odalar", icon: Home },
@@ -9299,6 +9303,7 @@ const legacyUserGifAliases: Record<string, string> = {
             );
           })}
         </div>
+        ) : null}
       </div>
     );
   };
