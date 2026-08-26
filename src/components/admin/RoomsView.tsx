@@ -35,9 +35,7 @@ type RoomForm = {
   minStar: number;
   backgroundColor: string;
   roomImage: string;
-  logo: string;
   roomImageFile: File | null;
-  logoFile: File | null;
 };
 
 const RENAME_LOCKED_ROOM_NAMES = new Set([
@@ -80,9 +78,7 @@ export const RoomsView = ({
       minStar: 0,
       backgroundColor: "#e5e7eb",
       roomImage: "",
-      logo: "",
       roomImageFile: null,
-      logoFile: null,
     }),
     [],
   );
@@ -224,9 +220,7 @@ export const RoomsView = ({
       minStar: room.minStar ?? 0,
       backgroundColor: room.backgroundColor || "#e5e7eb",
       roomImage: room.roomImage ?? "",
-      logo: room.logo ?? "",
       roomImageFile: null,
-      logoFile: null,
     });
     setSaveError(null);
     setIsModalOpen(true);
@@ -369,10 +363,8 @@ export const RoomsView = ({
       appendIfPresent("minStar", form.minStar);
       appendIfPresent("backgroundColor", form.backgroundColor);
       appendIfPresent("roomImage", form.roomImage);
-      appendIfPresent("logo", form.logo);
       if (form.roomImageFile)
         payload.append("roomImageFile", form.roomImageFile);
-      if (form.logoFile) payload.append("logoFile", form.logoFile);
 
       try {
         setIsSaving(true);
@@ -461,13 +453,9 @@ export const RoomsView = ({
       selectedRoom.backgroundColor,
     );
     appendIfChanged("roomImage", form.roomImage, selectedRoom.roomImage);
-    appendIfChanged("logo", form.logo, selectedRoom.logo);
 
     if (form.roomImageFile) {
       payload.append("roomImageFile", form.roomImageFile);
-    }
-    if (form.logoFile) {
-      payload.append("logoFile", form.logoFile);
     }
 
     if ([...payload.keys()].length === 0) {
@@ -814,11 +802,14 @@ export const RoomsView = ({
                       </label>
                       <input
                         type="number"
-                        min={1}
+                        min={0}
                         max={20}
                         className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
                         value={form.microphoneLimit}
-                        onChange={(e) => handleChange("microphoneLimit", Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
+                        onChange={(e) => {
+                          const value = Number(e.target.value);
+                          handleChange("microphoneLimit", Number.isFinite(value) ? Math.max(0, Math.min(20, value)) : 0);
+                        }}
                       />
                     </div>
                     <div className="space-y-1.5">

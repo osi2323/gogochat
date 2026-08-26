@@ -76,7 +76,6 @@ type StatusModeOption = { id: number; name: string };
 type SiteTheme = "default" | "dark";
 type MobileSettingsSection =
   | "home"
-  | "roomDesign"
   | "writing"
   | "general"
   | "notifications"
@@ -267,20 +266,6 @@ const userGifOptions: Array<{ label: string; value: string }> = [
   { label: "Buz Çerçeve", value: "/usergifler/yılbasi.gif" },
 ];
 
-const roomDesignFiles = [
-  "avatar.jpg",
-  "kingmobile.png",
-  "pexels-amed-zenger-315696382-13641990.jpg",
-  "pexels-ellie-burgin-1661546-3362702.jpg",
-  "pexels-umudicreative-17133047.jpg",
-  "pexels-efrem-efre-2786187-29557632.jpg",
-  "pexels-artosuraj-36286291.jpg",
-  "pexels-onuryumlu-15795028.jpg",
-  "pexels-njeromin-11830264.jpg",
-  "456712280_17999227514656648_949295733479667370_n.jpg",
-  "galatasaray.jpg",
-  "fenerbahce.jpg",
-];
 
 export const SettingsModal = ({
   isOpen,
@@ -296,9 +281,6 @@ export const SettingsModal = ({
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [statusModes, setStatusModes] = useState<StatusModeOption[]>([]);
   const [selectedStatusId, setSelectedStatusId] = useState<number | null>(null);
-  const [selectedRoomDesign, setSelectedRoomDesign] = useState<string | null>(
-    null,
-  );
   const [selectedFontSize, setSelectedFontSize] = useState<string>("16px");
   const [selectedFontColor, setSelectedFontColor] = useState<string | null>(
     null,
@@ -724,8 +706,6 @@ export const SettingsModal = ({
   useEffect(() => {
     if (!isOpen || typeof window === "undefined") return;
     const loadSettingsData = async () => {
-      const saved = localStorage.getItem("chatBackground");
-      setSelectedRoomDesign(saved ?? null);
       const savedFont = localStorage.getItem("chatFontSize");
       if (savedFont) {
         setSelectedFontSize(savedFont);
@@ -1591,95 +1571,6 @@ export const SettingsModal = ({
     );
   };
 
-  const renderRoomDesignSection = () => (
-    <div className="space-y-4">
-      <h3 className="text-center text-lg font-black text-zinc-900">
-        KİŞİSEL ODA DİZAYNLARI
-      </h3>
-      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-        {roomDesignFiles.map((file) => {
-          const path = `/images/${file}`;
-          const isActive = selectedRoomDesign === path;
-          const isPexelsImage = file.startsWith("pexels-");
-          const isCustomPhoto =
-            file === "456712280_17999227514656648_949295733479667370_n.jpg";
-          const shouldUseInsetPreview = isPexelsImage || isCustomPhoto;
-          const imagePosition = isCustomPhoto ? "center 42%" : "center";
-          return (
-            <button
-              key={file}
-              type="button"
-              onClick={() => {
-                setSelectedRoomDesign(path);
-                if (typeof window !== "undefined") {
-                  localStorage.setItem("chatBackground", path);
-                  window.dispatchEvent(
-                    new CustomEvent("chatBackgroundChanged", { detail: path }),
-                  );
-                }
-              }}
-              className={`relative h-24 overflow-hidden rounded-xl border transition ${
-                isActive
-                  ? "border-blue-500 ring-2 ring-blue-200"
-                  : "border-zinc-200"
-              }`}
-              style={
-                shouldUseInsetPreview
-                  ? {
-                      backgroundImage: `url('/images/${file}')`,
-                      backgroundPosition: imagePosition,
-                      backgroundSize: "cover",
-                    }
-                  : undefined
-              }
-            >
-              {shouldUseInsetPreview ? (
-                <span
-                  className="absolute inset-0 scale-110 bg-cover bg-center bg-no-repeat opacity-70 blur-sm"
-                  style={{
-                    backgroundImage: `url('/images/${file}')`,
-                    backgroundPosition: imagePosition,
-                  }}
-                />
-              ) : null}
-              <Image
-                src={`/images/${file}`}
-                alt={file}
-                fill
-                sizes="140px"
-                className={shouldUseInsetPreview ? "object-contain" : "object-cover"}
-                style={{
-                  objectPosition: imagePosition,
-                  objectFit: isCustomPhoto ? "scale-down" : undefined,
-                }}
-              />
-              {isActive && (
-                <span className="absolute bottom-1.5 right-1.5 rounded bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white">
-                  Seçili
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-      <button
-        type="button"
-        className="w-full rounded-xl bg-zinc-800 px-4 py-3 text-sm font-semibold text-white active:bg-zinc-700"
-        onClick={() => {
-          setSelectedRoomDesign(null);
-          if (typeof window !== "undefined") {
-            localStorage.removeItem("chatBackground");
-            window.dispatchEvent(
-              new CustomEvent("chatBackgroundChanged", { detail: null }),
-            );
-          }
-        }}
-      >
-        Özel Dizaynı Kaldır
-      </button>
-    </div>
-  );
-
   const renderWritingSection = () => (
     <div className="space-y-6">
       <div className="space-y-3">
@@ -1887,9 +1778,6 @@ export const SettingsModal = ({
   );
 
   const renderMobileSectionContent = () => {
-    if (activeMobileSettingsSection === "roomDesign") {
-      return renderRoomDesignSection();
-    }
     if (activeMobileSettingsSection === "writing") {
       return renderWritingSection();
     }
@@ -2392,115 +2280,6 @@ export const SettingsModal = ({
                 )}
               </div>
             </div>
-          </div>
-
-          {/* Personal Room Images */}
-          <div className="border-b border-zinc-200 p-4">
-            <h3 className="mb-3 text-center font-semibold text-zinc-900">
-              KİŞİSEL ODA DİZAYNLARI
-            </h3>
-            <div className="grid grid-cols-4 gap-2 mb-3">
-              {[
-                "avatar.jpg",
-                "kingmobile.png",
-                "pexels-amed-zenger-315696382-13641990.jpg",
-                "pexels-ellie-burgin-1661546-3362702.jpg",
-                "pexels-umudicreative-17133047.jpg",
-                "pexels-efrem-efre-2786187-29557632.jpg",
-                "pexels-artosuraj-36286291.jpg",
-                "pexels-onuryumlu-15795028.jpg",
-                "pexels-njeromin-11830264.jpg",
-                "456712280_17999227514656648_949295733479667370_n.jpg",
-                "galatasaray.jpg",
-                "fenerbahce.jpg",
-              ].map((file) => {
-                const path = `/images/${file}`;
-                const isActive = selectedRoomDesign === path;
-                const isPexelsImage = file.startsWith("pexels-");
-                const isCustomPhoto =
-                  file ===
-                  "456712280_17999227514656648_949295733479667370_n.jpg";
-                const shouldUseInsetPreview = isPexelsImage || isCustomPhoto;
-                const imagePosition = isCustomPhoto ? "center 42%" : "center";
-                return (
-                  <button
-                    key={file}
-                    onClick={() => {
-                      setSelectedRoomDesign(path);
-                      if (typeof window !== "undefined") {
-                        localStorage.setItem("chatBackground", path);
-                        window.dispatchEvent(
-                          new CustomEvent("chatBackgroundChanged", {
-                            detail: path,
-                          }),
-                        );
-                      }
-                    }}
-                    className={`relative h-20 overflow-hidden rounded-lg border transition ${
-                      isActive
-                        ? "border-blue-500 ring-2 ring-blue-200"
-                        : "border-zinc-200"
-                    }`}
-                    style={
-                      shouldUseInsetPreview
-                        ? {
-                            backgroundImage: `url('/images/${file}')`,
-                            backgroundPosition: imagePosition,
-                            backgroundSize: "cover",
-                          }
-                        : undefined
-                    }
-                  >
-                    {shouldUseInsetPreview ? (
-                      <span
-                        className="absolute inset-0 bg-cover bg-center bg-no-repeat blur-sm scale-110 opacity-70"
-                        style={{
-                          backgroundImage: `url('/images/${file}')`,
-                          backgroundPosition: imagePosition,
-                        }}
-                      />
-                    ) : null}
-                    <Image
-                      src={`/images/${file}`}
-                      alt={file}
-                      fill
-                      sizes="120px"
-                      className={
-                        shouldUseInsetPreview
-                          ? "object-contain"
-                          : "object-cover"
-                      }
-                      style={{
-                        objectPosition: imagePosition,
-                        objectFit: isCustomPhoto ? "scale-down" : undefined,
-                      }}
-                      priority={false}
-                    />
-                    {isActive && (
-                      <span className="absolute bottom-1 right-1 rounded bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white">
-                        Seçili
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-            <button
-              className="w-full rounded-lg bg-zinc-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800"
-              onClick={() => {
-                setSelectedRoomDesign(null);
-                if (typeof window !== "undefined") {
-                  localStorage.removeItem("chatBackground");
-                  window.dispatchEvent(
-                    new CustomEvent("chatBackgroundChanged", {
-                      detail: null,
-                    }),
-                  );
-                }
-              }}
-            >
-              Özel Dizaynı Kaldır
-            </button>
           </div>
 
           {/* General Settings */}

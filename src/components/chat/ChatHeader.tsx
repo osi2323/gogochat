@@ -22,7 +22,7 @@ export const ChatHeader = ({
   ownerAvatar,
   mobileActions,
   mobileVoiceSlots,
-  mobileVoiceSlotCount = 5,
+  mobileVoiceSlotCount = 0,
   mobileVoiceActiveCount = 0,
   onMobileBack,
 }: ChatHeaderProps) => {
@@ -33,7 +33,7 @@ export const ChatHeader = ({
   return (
     <>
       <header className="chat-theme-mobile-header relative px-2.5 pt-2.5 md:hidden">
-        <div className="overflow-hidden rounded-[20px] border-2 border-[var(--chat-border)] bg-[var(--chat-header-bg)] shadow-[0_10px_24px_rgba(0,0,0,0.14)]">
+        <div className="overflow-hidden rounded-[22px] border-2 border-[var(--chat-border)] bg-[var(--chat-header-bg)] shadow-[0_10px_24px_rgba(0,0,0,0.14)]">
           <div className="flex min-h-[52px] items-center justify-between gap-2 border-b border-[var(--chat-border)] px-2.5 py-2">
             <div className="flex min-w-0 items-center gap-2">
               <button
@@ -62,17 +62,17 @@ export const ChatHeader = ({
             {mobileActions ? <div className="flex shrink-0 items-center gap-1.5">{mobileActions}</div> : null}
           </div>
 
-          {mobileVoiceSlots ? (
+          {mobileVoiceSlotCount > 0 && mobileVoiceSlots ? (
             <div className="px-2.5 pb-2.5 pt-2">
               <div className="mb-1.5 flex items-center justify-between px-1">
-                <span className="text-[9px] font-black uppercase tracking-[0.14em] text-[var(--chat-muted)]">Mikrofon Sahnesi</span>
+                <span className="text-[9px] font-black uppercase tracking-[0.14em] text-[var(--chat-muted)]">Ses Sahnesi</span>
                 <span className="rounded-full border border-[var(--chat-border)] bg-[var(--chat-card-bg)] px-2 py-0.5 text-[9px] font-black text-[var(--chat-text)]">
-                  {mobileVoiceActiveCount}/{Math.max(1, mobileVoiceSlotCount)}
+                  {mobileVoiceActiveCount}/{mobileVoiceSlotCount}
                 </span>
               </div>
               <div
                 className="grid gap-2 rounded-[16px] border border-[var(--chat-border)] bg-[var(--chat-card-soft-bg)] p-2 shadow-inner"
-                style={{ gridTemplateColumns: `repeat(${Math.max(1, mobileVoiceSlotCount)}, minmax(0, 1fr))` }}
+                style={{ gridTemplateColumns: `repeat(${mobileVoiceSlotCount}, minmax(0, 1fr))` }}
               >
                 {mobileVoiceSlots}
               </div>

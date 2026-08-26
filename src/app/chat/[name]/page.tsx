@@ -944,20 +944,6 @@ const getGuestStatusFromStorage = (): string | null => {
   return name || null;
 };
 
-const personalRoomDesignImages = [
-  "avatar.jpg",
-  "kingmobile.png",
-  "pexels-amed-zenger-315696382-13641990.jpg",
-  "pexels-ellie-burgin-1661546-3362702.jpg",
-  "pexels-umudicreative-17133047.jpg",
-  "pexels-efrem-efre-2786187-29557632.jpg",
-  "pexels-artosuraj-36286291.jpg",
-  "pexels-onuryumlu-15795028.jpg",
-  "pexels-njeromin-11830264.jpg",
-  "456712280_17999227514656648_949295733479667370_n.jpg",
-  "galatasaray.jpg",
-  "fenerbahce.jpg",
-];
 
 const FALLBACK_CHAT_BACKGROUND = "/images/kingmobile.png";
 
@@ -1168,8 +1154,6 @@ function ChatPageContent({
   const [showMobileSettings, setShowMobileSettings] = useState(false);
   const [chatSiteTheme, setChatSiteTheme] =
     useState<ChatSiteTheme>("dark");
-  const [showMobileRoomDesignPicker, setShowMobileRoomDesignPicker] =
-    useState(false);
   const [dmUnreadCount, setDmUnreadCount] = useState(0);
   const [pendingDmConversationCounts, setPendingDmConversationCounts] =
     useState<Record<number, number>>({});
@@ -1182,23 +1166,6 @@ function ChatPageContent({
     content: string;
     messageId?: number;
   } | null>(null);
-
-  const applyMobileRoomDesign = useCallback((path: string | null) => {
-    if (typeof window === "undefined") return;
-
-    if (path) {
-      localStorage.setItem("chatBackground", path);
-    } else {
-      localStorage.removeItem("chatBackground");
-    }
-
-    window.dispatchEvent(
-      new CustomEvent("chatBackgroundChanged", {
-        detail: path,
-      }),
-    );
-    setShowMobileRoomDesignPicker(false);
-  }, []);
 
   useEffect(() => {
     setChatSiteTheme(readStoredChatSiteTheme());
@@ -1383,7 +1350,7 @@ function ChatPageContent({
     roomUsers,
   ]);
   const effectiveMicrophoneLimit = Math.max(
-    1,
+    0,
     Math.min(10, Number(roomDetail?.microphoneLimit ?? 5)),
   );
 
@@ -3776,7 +3743,7 @@ function ChatPageContent({
       : activeMobileVoiceMenuSlotIndex >= 4
         ? { right: 12 }
         : {
-            left: `${((activeMobileVoiceMenuSlotIndex + 0.5) / effectiveMicrophoneLimit) * 100}vw`,
+            left: `${((activeMobileVoiceMenuSlotIndex + 0.5) / Math.max(1, effectiveMicrophoneLimit)) * 100}vw`,
             transform: "translateX(-50%)",
           };
   const chatThemeStyle = CHAT_SITE_THEME_VARS[
@@ -3990,8 +3957,8 @@ function ChatPageContent({
           .kingmobile-desktop-shell { background: var(--chat-app-bg); color: var(--chat-text); }
           .kingmobile-desktop-shell > .chat-theme-sidebar {
             width: 330px !important;
-            height: calc(100dvh - 190px) !important;
-            margin-top: 190px !important;
+            height: calc(100dvh - 248px) !important;
+            margin-top: 248px !important;
             border-color: var(--chat-border) !important;
             background: var(--chat-sidebar-bg) !important;
           }
@@ -4048,13 +4015,16 @@ function ChatPageContent({
           }
           .kingmobile-desktop-shell .kingmobile-room-button {
             border-color: var(--chat-border) !important;
-            background: var(--chat-card-soft-bg) !important;
+            background: linear-gradient(180deg, color-mix(in srgb, var(--chat-card-bg) 94%, white 6%), var(--chat-card-soft-bg)) !important;
             color: var(--chat-text) !important;
+            box-shadow: 0 6px 16px rgba(2,8,23,.11), inset 0 1px 0 rgba(255,255,255,.18);
           }
+          .kingmobile-desktop-shell .kingmobile-room-button:hover { border-color: color-mix(in srgb, var(--chat-accent) 65%, var(--chat-border)) !important; transform: translateY(-1px); }
           .kingmobile-desktop-shell .kingmobile-room-button[data-active="true"] {
             border-color: var(--chat-accent) !important;
-            background: var(--chat-accent-soft) !important;
+            background: linear-gradient(135deg, color-mix(in srgb, var(--chat-accent) 18%, var(--chat-card-bg)), var(--chat-card-bg)) !important;
             color: var(--chat-accent-strong) !important;
+            box-shadow: 0 10px 24px color-mix(in srgb, var(--chat-accent) 20%, transparent), inset 3px 0 0 var(--chat-accent) !important;
           }
           .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .kingmobile-panel-card,
           .kingmobile-desktop-shell:not([data-chat-theme="dark"]) .kingmobile-room-button,
@@ -4087,7 +4057,7 @@ function ChatPageContent({
         }
       `}</style>
 
-      <div className="kingmobile-topbar absolute inset-x-0 top-0 z-40 hidden h-[190px] border-b border-slate-800/90 bg-[#060d17]/98 text-white shadow-[0_16px_44px_rgba(0,0,0,0.42)] backdrop-blur-xl md:block">
+      <div className="kingmobile-topbar absolute inset-x-0 top-0 z-40 hidden h-[248px] border-b border-slate-800/90 bg-[#060d17]/98 text-white shadow-[0_16px_44px_rgba(0,0,0,0.42)] backdrop-blur-xl md:block">
         <div className="flex h-[96px] items-center gap-3 overflow-hidden border-b border-slate-800/90 px-4 pr-[400px]">
           <div className="flex w-[310px] shrink-0 items-center pr-3">
             <div className="relative flex h-[72px] w-full items-center justify-center overflow-hidden rounded-[22px] border-2 border-violet-400/35 bg-gradient-to-br from-violet-600/18 via-blue-500/10 to-cyan-400/10 px-5 shadow-[0_0_34px_rgba(124,58,237,0.18)]">
@@ -4180,27 +4150,17 @@ function ChatPageContent({
           </div>
         </div>
 
-        <div className="kingmobile-roombar flex h-[94px] items-stretch gap-3 overflow-hidden px-4 py-2">
-          <div className="flex w-[74px] shrink-0 flex-col items-center justify-center gap-1 rounded-xl border-2 border-[var(--chat-border)] bg-[var(--chat-card-bg)] text-[10px] font-black uppercase tracking-[0.1em] text-[var(--chat-muted)] shadow-sm">
-            <UsersRound className="h-4 w-4" />
-            Odalar
+        <div className="kingmobile-roombar flex h-[152px] items-stretch gap-3 overflow-hidden px-5 py-3">
+          <div className="flex w-[84px] shrink-0 flex-col items-center justify-center gap-2 rounded-[20px] border-2 border-[var(--chat-border)] bg-[var(--chat-card-bg)] text-[10px] font-black uppercase tracking-[0.14em] text-[var(--chat-muted)] shadow-[0_10px_26px_rgba(2,8,23,0.12)]">
+            <span className="flex h-10 w-10 items-center justify-center rounded-[14px] border border-[var(--chat-border)] bg-[var(--chat-card-soft-bg)]"><UsersRound className="h-5 w-5" /></span>Odalar
           </div>
-          <div className="grid min-w-0 flex-1 grid-flow-col grid-rows-2 auto-cols-[206px] gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="grid min-w-0 flex-1 auto-rows-[56px] grid-cols-[repeat(auto-fit,minmax(175px,1fr))] content-start gap-2.5 overflow-y-auto overflow-x-hidden pr-1 [scrollbar-width:thin]">
           {desktopRooms.length > 0 ? desktopRooms.map((room) => {
             const active = String(room.name).trim().toLocaleLowerCase("tr-TR") === String(roomDetail?.name || roomName).trim().toLocaleLowerCase("tr-TR");
-            return (
-              <button
-                key={`desktop-room-${room.id}-${room.name}`}
-                type="button"
-                onClick={() => openDesktopRoom(room)}
-                data-active={active ? "true" : "false"}
-                className="kingmobile-room-button flex h-[37px] min-w-0 items-center gap-2 rounded-xl border-2 px-3 text-xs font-bold shadow-sm transition hover:-translate-y-px"
-              >
-                {room.isPrivate ? <LockKeyhole className="h-3.5 w-3.5 text-amber-300" /> : room.radioPanelLink ? <Radio className="h-3.5 w-3.5 text-cyan-300" /> : <MessageSquare className="h-3.5 w-3.5 text-slate-400" />}
-                <span className="min-w-0 flex-1 truncate">{room.name}</span>
-                <span className="rounded-full border border-[var(--chat-border)] bg-[var(--chat-panel-muted)] px-2 py-0.5 text-[10px] text-[var(--chat-muted)]">{room.visibleUserCount ?? 0}</span>
-              </button>
-            );
+            return <button key={`desktop-room-${room.id}-${room.name}`} type="button" onClick={() => openDesktopRoom(room)} data-active={active ? "true" : "false"} className="kingmobile-room-button group flex min-w-0 items-center gap-2.5 rounded-[17px] border-2 px-3.5 text-left transition">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[11px] border border-[var(--chat-border)] bg-[var(--chat-panel-muted)]">{room.isPrivate ? <LockKeyhole className="h-3.5 w-3.5 text-amber-500" /> : room.radioPanelLink ? <Radio className="h-3.5 w-3.5 text-cyan-500" /> : <MessageSquare className="h-3.5 w-3.5 text-[var(--chat-muted)]" />}</span>
+              <span className="min-w-0 flex-1"><span className="block truncate text-[11px] font-black leading-tight">{room.name}</span><span className="mt-1 block text-[9px] font-bold text-[var(--chat-muted)]">{room.visibleUserCount ?? 0} kişi</span></span>
+            </button>;
           }) : <span className="text-xs text-slate-500">Oda bulunamadı</span>}
           </div>
         </div>
@@ -4376,7 +4336,7 @@ function ChatPageContent({
         onDeleteCallHistory={deleteCallHistoryEntry}
       />
 
-      <aside className="kingmobile-right-panel absolute bottom-0 right-0 top-[190px] z-30 hidden w-[330px] flex-col gap-3 overflow-y-auto border-l border-slate-800/90 bg-[#07111c] p-3 text-slate-100 md:flex">
+      <aside className="kingmobile-right-panel absolute bottom-0 right-0 top-[248px] z-30 hidden w-[330px] flex-col gap-3 overflow-y-auto border-l border-slate-800/90 bg-[#07111c] p-3 text-slate-100 md:flex">
         <section className="kingmobile-panel-card rounded-2xl border border-slate-800 bg-[#0b1623] p-4 shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-xs font-black uppercase tracking-[0.1em] text-slate-300">Oda Bilgileri</h3>
@@ -4386,14 +4346,9 @@ function ChatPageContent({
               </button>
             ) : null}
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-violet-600 to-blue-600 text-sm font-black text-white">
-              {roomDetail?.logo ? <img src={roomDetail.logo} alt="" className="h-full w-full object-cover" /> : (roomDetail?.name || roomName).slice(0, 2).toUpperCase()}
-            </div>
-            <div className="min-w-0">
-              <div className="truncate text-base font-black text-white">{roomDetail?.name || roomName}</div>
-              <div className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-slate-400">{roomDetail?.description || "ChatsON sohbet odası"}</div>
-            </div>
+          <div className="min-w-0 rounded-[14px] border border-[var(--chat-border)] bg-[var(--chat-card-soft-bg)] px-3.5 py-3">
+            <div className="truncate text-base font-black text-[var(--chat-text)]">{roomDetail?.name || roomName}</div>
+            <div className="mt-1 line-clamp-2 text-xs leading-relaxed text-[var(--chat-muted)]">{roomDetail?.description || "ChatsON sohbet odası"}</div>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
             <div><span className="block text-[10px] uppercase text-slate-500">Oda Sahibi</span><span className="mt-0.5 block truncate font-bold text-amber-200">{roomDetail?.owner?.username || "-"}</span></div>
@@ -4575,7 +4530,7 @@ function ChatPageContent({
       ) : null}
 
       {/* Chat Area - Daha çok yer kaplayan alan */}
-      <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden md:mr-[330px] md:pt-[190px]">
+      <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden md:mr-[330px] md:pt-[248px]">
         {activeJoinEffect && !disableJoinEffectsEnabled && (
           <div className="join-effect-host">
             <div className="join-effect-banner-wrap">
@@ -5239,86 +5194,6 @@ function ChatPageContent({
         </div>
       ) : null}
 
-      {showMobileRoomDesignPicker ? (
-        <div
-          className="fixed inset-0 z-[240] flex items-end bg-black/45 md:hidden"
-          onClick={() => setShowMobileRoomDesignPicker(false)}
-        >
-          <div
-            className="flex h-[min(58svh,430px)] w-full flex-col rounded-t-[20px] bg-white pb-[env(safe-area-inset-bottom)] shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-3">
-              <div>
-                <h3 className="text-base font-bold text-zinc-950">
-                  Kişisel oda dizaynı
-                </h3>
-                <p className="text-xs font-medium text-zinc-500">
-                  Sohbet alanı arka planı
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowMobileRoomDesignPicker(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 text-base font-semibold text-zinc-500 active:bg-zinc-200"
-                aria-label="Kapat"
-              >
-                X
-              </button>
-            </div>
-
-            <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3">
-              <div className="grid grid-cols-4 gap-2.5">
-                {personalRoomDesignImages.map((file) => {
-                  const path = `/images/${file}`;
-                  const isActive = chatBackground === path;
-                  const isCustomPhoto =
-                    file ===
-                    "456712280_17999227514656648_949295733479667370_n.jpg";
-                  const objectPosition = isCustomPhoto ? "center 42%" : "center";
-
-                  return (
-                    <button
-                      key={file}
-                      type="button"
-                      onClick={() => applyMobileRoomDesign(path)}
-                      className={`relative aspect-[4/5] overflow-hidden rounded-lg border bg-zinc-100 shadow-sm transition active:scale-[0.98] ${
-                        isActive
-                          ? "border-[#0a84ff] ring-2 ring-[#0a84ff]/25"
-                          : "border-zinc-200"
-                      }`}
-                      style={{
-                        backgroundImage: `url('${path}')`,
-                        backgroundPosition: objectPosition,
-                        backgroundSize: "cover",
-                        backgroundRepeat: "no-repeat",
-                      }}
-                      aria-label={`${file} dizaynını seç`}
-                    >
-                      {isActive ? (
-                        <span className="absolute bottom-1.5 right-1.5 rounded-full bg-[#0a84ff] px-1.5 py-0.5 text-[9px] font-bold text-white shadow">
-                          Seçili
-                        </span>
-                      ) : null}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="sticky bottom-0 shrink-0 border-t border-zinc-100 bg-white px-3 py-2.5">
-              <button
-                type="button"
-                onClick={() => applyMobileRoomDesign(null)}
-                className="h-10 w-full rounded-full bg-zinc-900 text-sm font-semibold text-white active:bg-zinc-800"
-              >
-                Özel dizaynı kaldır
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
-
       <SettingsModal
         isOpen={showMobileSettings}
         onClose={() => setShowMobileSettings(false)}
@@ -5780,11 +5655,6 @@ export default function ChatPage() {
       options: { includeFallback?: boolean } = {},
     ) => {
       const includeFallback = options.includeFallback ?? true;
-      if (typeof window !== "undefined") {
-        const saved = localStorage.getItem("chatBackground")?.trim();
-        if (saved) return saved;
-      }
-
       const roomUrl = getRoomImageUrl(room?.roomImage, room?.updatedAt);
       if (roomUrl) return roomUrl;
 
