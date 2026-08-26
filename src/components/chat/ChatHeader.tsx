@@ -9,6 +9,7 @@ type ChatHeaderProps = {
   ownerAvatar?: string | null;
   mobileActions?: React.ReactNode;
   mobileVoiceSlots?: React.ReactNode;
+  mobileVoiceSlotCount?: number;
   mobileBackgroundImage?: string | null;
   onMobileBack?: () => void;
 };
@@ -20,6 +21,7 @@ export const ChatHeader = ({
   ownerAvatar,
   mobileActions,
   mobileVoiceSlots,
+  mobileVoiceSlotCount = 5,
   onMobileBack,
 }: ChatHeaderProps) => {
   const displayOwnerLabel = "Oda Sahibi";
@@ -49,28 +51,13 @@ export const ChatHeader = ({
                 <ChevronLeft className="h-5 w-5 text-white stroke-[2.4]" />
               </span>
             </button>
-            <div className="flex h-8 min-w-0 rounded-xl border border-white/10 bg-white/8 shadow-[0_4px_14px_rgba(0,0,0,0.18)]">
-              <div className="flex h-full min-w-0 items-center gap-2 rounded-xl bg-black/28 py-1 pl-1 pr-3 backdrop-blur-md">
-                {ownerAvatar ? (
-                  <img
-                    src={ownerAvatar}
-                    alt={displayOwnerLabel}
-                    className="h-6 w-6 shrink-0 rounded-lg object-cover ring-1 ring-white/15"
-                  />
-                ) : (
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600/70 to-blue-600/70 text-[7px] font-black ring-1 ring-white/15">
-                    ROOT
-                  </div>
-                )}
-                <div className="min-w-0 leading-tight">
-                  <h1 className="truncate text-[11px] font-black tracking-tight text-white drop-shadow-sm">
-                    {decodeURIComponent(name)}
-                  </h1>
-                  <span className="line-clamp-1 text-[8px] font-semibold text-white/65">
-                    Sahibi : {decodeURIComponent(displayOwnerUsername)}
-                  </span>
-                </div>
-              </div>
+            <div className="min-w-0 rounded-xl border border-white/10 bg-black/24 px-3 py-1.5">
+              <h1 className="truncate text-[12px] font-black tracking-tight text-white">
+                {decodeURIComponent(name)}
+              </h1>
+              <span className="block truncate text-[8px] font-semibold text-white/60">
+                Sahibi: {decodeURIComponent(displayOwnerUsername)}
+              </span>
             </div>
           </div>
 
@@ -82,7 +69,10 @@ export const ChatHeader = ({
         </div>
 
         {mobileVoiceSlots ? (
-          <div className="mt-2.5 grid grid-cols-5 gap-1.5 rounded-[18px] border border-white/8 bg-black/10 p-1.5 backdrop-blur-sm">
+          <div
+            className="mt-2.5 grid gap-1.5 rounded-[16px] border border-white/8 bg-black/10 p-1.5"
+            style={{ gridTemplateColumns: `repeat(${Math.max(1, mobileVoiceSlotCount)}, minmax(0, 1fr))` }}
+          >
             {mobileVoiceSlots}
           </div>
         ) : null}

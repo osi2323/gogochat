@@ -1477,8 +1477,16 @@ function ChatPageContent({
     optimisticVoiceSeatIndex,
     roomUsers,
   ]);
+  const effectiveMicrophoneLimit = Math.max(
+    1,
+    Math.min(10, Number(roomDetail?.microphoneLimit ?? 5)),
+  );
+
   const mobileVoiceSlots = useMemo(() => {
-    const slots: Array<RoomUser | null> = Array.from({ length: 5 }, () => null);
+    const slots: Array<RoomUser | null> = Array.from(
+      { length: effectiveMicrophoneLimit },
+      () => null,
+    );
     const overflowUsers: RoomUser[] = [];
 
     mobileVoiceUsers.forEach((user) => {
@@ -1497,7 +1505,7 @@ function ChatPageContent({
     });
 
     return slots;
-  }, [mobileVoiceUsers]);
+  }, [mobileVoiceUsers, effectiveMicrophoneLimit]);
 
   useEffect(() => {
     if (!socket || !currentUsername) return;
@@ -1699,9 +1707,9 @@ function ChatPageContent({
       }
     }
 
-    if (!alreadyHasSeat && mobileVoiceUsers.length >= 5) {
+    if (!alreadyHasSeat && mobileVoiceUsers.length >= effectiveMicrophoneLimit) {
       toast.warning(
-        "5 avatar koltuğu dolu. Mikrofon al butonuyla konuşmaya devam edebilirsin.",
+        `${effectiveMicrophoneLimit} mikrofon alanı dolu.`,
       );
       return;
     }
@@ -3863,7 +3871,7 @@ function ChatPageContent({
       : activeMobileVoiceMenuSlotIndex >= 4
         ? { right: 12 }
         : {
-            left: `${(activeMobileVoiceMenuSlotIndex + 0.5) * 20}vw`,
+            left: `${((activeMobileVoiceMenuSlotIndex + 0.5) / effectiveMicrophoneLimit) * 100}vw`,
             transform: "translateX(-50%)",
           };
   const chatThemeStyle = CHAT_SITE_THEME_VARS[
@@ -4267,11 +4275,12 @@ function ChatPageContent({
           </div>
         </div>
 
-        <div className="kingmobile-roombar flex h-[60px] items-center gap-2 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="mr-1 flex shrink-0 items-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-500">
+        <div className="kingmobile-roombar flex h-[106px] items-stretch gap-3 overflow-hidden px-4 py-2">
+          <div className="flex w-[74px] shrink-0 flex-col items-center justify-center gap-1 rounded-xl border border-slate-800 bg-slate-900/55 text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">
             <UsersRound className="h-4 w-4" />
             Odalar
           </div>
+          <div className="grid min-w-0 flex-1 grid-flow-col grid-rows-2 auto-cols-[184px] gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {desktopRooms.length > 0 ? desktopRooms.map((room) => {
             const active = String(room.name).trim().toLocaleLowerCase("tr-TR") === String(roomDetail?.name || roomName).trim().toLocaleLowerCase("tr-TR");
             return (
@@ -4280,7 +4289,7 @@ function ChatPageContent({
                 type="button"
                 onClick={() => openDesktopRoom(room)}
                 data-active={active ? "true" : "false"}
-                className={`kingmobile-room-button flex h-10 shrink-0 items-center gap-2 rounded-xl border px-3.5 text-xs font-bold transition ${active ? "border-violet-400/60 bg-gradient-to-r from-violet-600/40 to-blue-600/30 text-white shadow-[0_0_18px_rgba(124,58,237,0.22)]" : "border-slate-800 bg-slate-900/65 text-slate-300 hover:border-slate-700 hover:bg-slate-800"}`}
+                className={`kingmobile-room-button flex h-[42px] min-w-0 items-center gap-2 rounded-xl border px-3 text-xs font-bold transition ${active ? "border-blue-400/70 bg-blue-600/20 text-white shadow-sm" : "border-slate-800 bg-slate-900/65 text-slate-300 hover:border-slate-700 hover:bg-slate-800"}`}
               >
                 {room.isPrivate ? <LockKeyhole className="h-3.5 w-3.5 text-amber-300" /> : room.radioPanelLink ? <Radio className="h-3.5 w-3.5 text-cyan-300" /> : <MessageSquare className="h-3.5 w-3.5 text-slate-400" />}
                 <span className="max-w-[145px] truncate">{room.name}</span>
@@ -4288,6 +4297,7 @@ function ChatPageContent({
               </button>
             );
           }) : <span className="text-xs text-slate-500">Oda bulunamadı</span>}
+          </div>
         </div>
       </div>
 
@@ -4900,6 +4910,7 @@ function ChatPageContent({
                   </button>
                 </>
               }
+              mobileVoiceSlotCount={effectiveMicrophoneLimit}
               mobileVoiceSlots={
                 showMobileVoiceSlots ? (
                   <>

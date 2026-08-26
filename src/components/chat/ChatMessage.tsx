@@ -729,7 +729,7 @@ export const ChatMessage = ({
   return (
     <div
       id={messageId ? `message-${messageId}` : undefined}
-      className="group flex w-full items-start justify-start gap-2"
+      className="chat-theme-message group flex w-full min-w-0 items-start justify-start gap-2"
     >
       {(
         <div
@@ -758,7 +758,7 @@ export const ChatMessage = ({
         </div>
       )}
 
-      <div className="flex flex-col max-w-[82%] md:max-w-[68%]">
+      <div className="flex min-w-0 max-w-[82%] flex-col md:max-w-[68%]">
         {onlyMedia ? (
           image?.includes("/emom/") ? (
             <div className="flex flex-col relative">

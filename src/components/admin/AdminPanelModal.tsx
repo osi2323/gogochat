@@ -2269,7 +2269,7 @@ const userGifOptions = [
               </svg>
             ),
             label: "Genel Ayarlar",
-            bgColor: "bg-gray-600",
+            bgColor: "bg-blue-600",
             onClick: () => setCurrentView("generalSettings"),
           },
         ]
@@ -2293,7 +2293,7 @@ const userGifOptions = [
               </svg>
             ),
             label: "Admin hareketleri",
-            bgColor: "bg-green-600",
+            bgColor: "bg-blue-600",
             onClick: () => setCurrentView("adminActions"),
           },
         ]
@@ -2317,7 +2317,7 @@ const userGifOptions = [
               </svg>
             ),
             label: "Giriş kayıtları",
-            bgColor: "bg-purple-600",
+            bgColor: "bg-blue-600",
             onClick: () => setCurrentView("loginHistory"),
           },
         ]
@@ -2371,7 +2371,7 @@ const userGifOptions = [
               </svg>
             ),
             label: "Yetkililer",
-            bgColor: "bg-orange-600",
+            bgColor: "bg-blue-600",
             onClick: () => setCurrentView("staff"),
           },
         ]
@@ -2395,7 +2395,7 @@ const userGifOptions = [
               </svg>
             ),
             label: "Üyeler",
-            bgColor: "bg-blue-500",
+            bgColor: "bg-blue-600",
             onClick: () => setCurrentView("members"),
           },
         ]
@@ -2419,7 +2419,7 @@ const userGifOptions = [
               </svg>
             ),
             label: "Banlilar",
-            bgColor: "bg-red-600",
+            bgColor: "bg-blue-600",
             onClick: () => setCurrentView("banned"),
           },
         ]
@@ -2443,7 +2443,7 @@ const userGifOptions = [
               </svg>
             ),
             label: "Rütbeler",
-            bgColor: "bg-yellow-600",
+            bgColor: "bg-blue-600",
             onClick: () => setCurrentView("roles"),
           },
         ]
@@ -2467,7 +2467,7 @@ const userGifOptions = [
               </svg>
             ),
             label: "Yasak kelimeler",
-            bgColor: "bg-pink-600",
+            bgColor: "bg-blue-600",
             onClick: () => setCurrentView("blockedWords"),
           },
         ]
@@ -2491,7 +2491,7 @@ const userGifOptions = [
               </svg>
             ),
             label: "Bot kontrol",
-            bgColor: "bg-cyan-600",
+            bgColor: "bg-blue-600",
             onClick: () => setCurrentView("bots"),
           },
         ]
@@ -2515,7 +2515,7 @@ const userGifOptions = [
               </svg>
             ),
             label: "Radyo ayarları",
-            bgColor: "bg-green-500",
+            bgColor: "bg-blue-600",
             onClick: () => setCurrentView("radio"),
           },
         ]
@@ -2539,7 +2539,7 @@ const userGifOptions = [
               </svg>
             ),
             label: "Yasak nickler",
-            bgColor: "bg-purple-500",
+            bgColor: "bg-blue-600",
             onClick: () => setCurrentView("forbiddenNicknames"),
           },
         ]
@@ -2563,13 +2563,14 @@ const userGifOptions = [
               </svg>
             ),
             label: "Web Konsol",
-            bgColor: "bg-slate-600",
+            bgColor: "bg-blue-600",
             onClick: () => setCurrentView("webConsole"),
           },
         ]
       : []),
   ];
 
+  // ChatsON V4: Ayarlar tek giriş noktasından yönetilir.
   const settingsItems: Array<{
     icon: React.ReactNode;
     label: string;
@@ -2577,102 +2578,7 @@ const userGifOptions = [
     onClick: () => void;
     disabled?: boolean;
     title?: string;
-  }> = [
-    ...(canAccessSiteSettings
-      ? [
-          {
-            icon: (
-              <svg
-                className="w-7 h-7"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
-            ),
-            label: "Sistem",
-            bgColor: "bg-gray-600",
-            onClick: () => setCurrentView("sistem"),
-          },
-        ]
-      : []),
-    {
-      icon: (
-        <svg
-          className="w-7 h-7"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
-          />
-        </svg>
-      ),
-      label: "Durum Modları",
-      bgColor: "bg-green-600",
-      onClick: () => setCurrentView("statusModes"),
-    },
-    ...(canAccessSiteSettings
-      ? [
-          {
-            icon: (
-              <svg
-                className="w-7 h-7"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
-            ),
-            label: "Güvenlik Tercihleri",
-            bgColor: "bg-red-600",
-            onClick: () => setCurrentView("securityPreferences"),
-          },
-        ]
-      : []),
-    {
-      icon: (
-        <svg
-          className="w-7 h-7"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      ),
-      label: "Site Bilgileri",
-      bgColor: "bg-purple-600",
-      onClick: () => undefined,
-    },
-  ];
+  }> = [];
 
   const hasInlineDetailView = Boolean(
     selectedAdminAction || selectedStaff || selectedMember || selectedRole,

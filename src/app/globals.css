@@ -840,3 +840,64 @@ body > div:first-child {
     z-index: 1;
   }
 }
+
+
+/* ChatsON V4: uzun mesajlar mobil/masaüstünde asla yatay taşmaz */
+.chat-theme-message,
+.chat-theme-message *,
+[data-chat-message],
+[data-chat-message] * {
+  min-width: 0;
+  max-width: 100%;
+}
+.chat-theme-message p,
+.chat-theme-message span,
+.chat-theme-message div,
+[data-chat-message] p,
+[data-chat-message] span,
+[data-chat-message] div {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+@media (max-width: 767px) {
+  .chat-theme-message,
+  [data-chat-message] {
+    max-width: calc(100vw - 42px) !important;
+  }
+  .chat-theme-message img,
+  .chat-theme-message video,
+  [data-chat-message] img,
+  [data-chat-message] video {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+
+
+/* ChatsON V4 mobile message bubble hard-stop: long text/URL never escapes its own bubble */
+@media (max-width: 767px) {
+  .chat-theme-message {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .chat-theme-message [data-chat-message-content],
+  .chat-theme-message [data-chat-message-content] *,
+  .chat-theme-message a,
+  .chat-theme-message p,
+  .chat-theme-message span,
+  .chat-theme-message code,
+  .chat-theme-message pre {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    white-space: pre-wrap !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+
+  .chat-theme-message pre,
+  .chat-theme-message code {
+    overflow-x: auto !important;
+  }
+}

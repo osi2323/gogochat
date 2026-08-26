@@ -9438,66 +9438,8 @@ const legacyUserGifAliases: Record<string, string> = {
               </button>
             </div>
 
-            <div className="mx-auto flex w-[72%] overflow-hidden rounded-full border-2 border-[#0a84ff] bg-white">
-              <button
-                type="button"
-                onClick={() => setActiveTab("all")}
-                className={`flex h-[30px] flex-1 items-center justify-center text-[13px] font-medium transition ${
-                  activeTab === "all"
-                    ? "bg-[#0a84ff] text-white"
-                    : "bg-white text-[#0a84ff]"
-                }`}
-              >
-                Herkes{" "}
-                <span
-                  className={`ml-1 text-[11px] ${
-                    activeTab === "all" ? "text-white/75" : "text-[#0a84ff]/70"
-                  }`}
-                >
-                  ({allUsersCount})
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab("friends")}
-                className={`flex h-[30px] flex-1 items-center justify-center text-[13px] font-medium transition ${
-                  activeTab === "friends"
-                    ? "bg-[#0a84ff] text-white"
-                    : "bg-white text-[#0a84ff]"
-                }`}
-              >
-                Arkadaşlar{" "}
-                <span
-                  className={`ml-1 text-[11px] ${
-                    activeTab === "friends"
-                      ? "text-white/75"
-                      : "text-[#0a84ff]/70"
-                  }`}
-                >
-                  ({friends.length})
-                </span>
-              </button>
-            </div>
-
             <div className="space-y-1">
-              {activeTab === "friends" ? (
-                friendsLoading ? (
-                  <div className="rounded-[14px] bg-white px-4 py-10 text-center text-sm font-medium text-zinc-500">
-                    Yükleniyor...
-                  </div>
-                ) : filteredFriends.length === 0 ? (
-                  <div className="rounded-[14px] bg-white px-4 py-10 text-center text-sm font-medium text-zinc-500">
-                    {searchQuery.trim() ? "Arkadaş bulunamadı" : "Arkadaş listen boş"}
-                  </div>
-                ) : (
-                  filteredFriends.map((item) =>
-                    renderMobileDirectoryCard(mapFriendToRoomUser(item), {
-                      friendRequestId: item.id,
-                      showFriendRemove: true,
-                    }),
-                  )
-                )
-              ) : filteredAllUsers.length === 0 ? (
+              {filteredAllUsers.length === 0 ? (
                 <div className="rounded-[14px] bg-white px-4 py-10 text-center text-sm font-medium text-zinc-500">
                   {searchQuery.trim() ? "Kullanıcı bulunamadı" : "Aktif kullanıcı yok"}
                 </div>
@@ -10643,10 +10585,7 @@ const legacyUserGifAliases: Record<string, string> = {
 
                 const renderRoomCard = (room: Room) => {
                   const roomKey = String(room.voiceId || room.name);
-                  const roomImageUrl = getRoomLogoUrl(
-                    room.logo,
-                    room.updatedAt,
-                  );
+                  const roomImageUrl = null;
                   const { value: liveCount } = getLiveCount(roomKey);
                   return (
                     <div
@@ -10742,10 +10681,7 @@ const legacyUserGifAliases: Record<string, string> = {
                           .filter(Boolean)
                           .map((room) => {
                             const roomKey = String(room!.voiceId || room!.name);
-                            const roomImageUrl = getRoomLogoUrl(
-                              room!.logo,
-                              room!.updatedAt,
-                            );
+                            const roomImageUrl = null;
                             const { value: liveCount } = getLiveCount(roomKey);
                             return (
                               <button

@@ -73,7 +73,7 @@ type BooleanChatPreferenceKey = Exclude<
 >;
 
 type StatusModeOption = { id: number; name: string };
-type SiteTheme = "default" | "dark" | "ocean" | "rose" | "emerald";
+type SiteTheme = "default" | "dark";
 type MobileSettingsSection =
   | "home"
   | "roomDesign"
@@ -90,44 +90,19 @@ const siteThemeOptions: Array<{
 }> = [
   {
     id: "default",
-    label: "Varsayılan",
-    previewClassName: "bg-linear-to-br from-white via-zinc-100 to-sky-100",
+    label: "Normal / Renkli",
+    previewClassName: "bg-linear-to-br from-white via-sky-50 to-blue-200",
   },
   {
     id: "dark",
     label: "Koyu",
-    previewClassName: "bg-linear-to-br from-zinc-950 via-zinc-800 to-slate-700",
-  },
-  {
-    id: "ocean",
-    label: "Okyanus",
-    previewClassName: "bg-linear-to-br from-cyan-200 via-sky-400 to-cyan-700",
-  },
-  {
-    id: "rose",
-    label: "Gül",
-    previewClassName: "bg-linear-to-br from-rose-100 via-pink-400 to-rose-700",
-  },
-  {
-    id: "emerald",
-    label: "Zümrüt",
-    previewClassName: "bg-linear-to-br from-emerald-100 via-emerald-400 to-teal-700",
+    previewClassName: "bg-linear-to-br from-slate-950 via-slate-900 to-blue-950",
   },
 ];
 
 const readStoredSiteTheme = (): SiteTheme => {
   if (typeof window === "undefined") return "default";
-  const stored = localStorage.getItem("chatSiteTheme");
-  if (
-    stored === "dark" ||
-    stored === "ocean" ||
-    stored === "rose" ||
-    stored === "emerald"
-  ) {
-    return stored;
-  }
-  if (stored === "blue") return "ocean";
-  return "default";
+  return localStorage.getItem("chatSiteTheme") === "dark" ? "dark" : "default";
 };
 
 const resolveProfileIconSource = (icon?: string | null) => {
@@ -2149,16 +2124,6 @@ export const SettingsModal = ({
                               label: "Rumuz Değiştir",
                               icon: Pencil,
                               onClick: () => openProfileTab("rumuz"),
-                            },
-                            {
-                              label: "İkonlar",
-                              icon: Sparkles,
-                              onClick: () => openProfileTab("ikonlar"),
-                            },
-                            {
-                              label: "Profil Ek Özellikler",
-                              icon: Brush,
-                              onClick: () => openProfileTab("ek"),
                             },
                             {
                               label: "Sohbet yazı rengi ve boyutu",
