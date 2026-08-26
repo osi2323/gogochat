@@ -487,16 +487,24 @@ const AdminCard = ({
     onClick={onClick}
     disabled={disabled}
     title={title}
-    className={`flex min-h-[92px] flex-col items-center justify-center gap-2 rounded-sm border px-2.5 py-3 shadow-sm transition-colors duration-200 sm:min-h-[112px] sm:px-3 sm:py-4 ${getAdminTileSurfaceClass(bgColor, disabled)}`}
+    className={`group flex min-h-[76px] items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3.5 py-3 text-left shadow-[0_6px_18px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-[0_10px_26px_rgba(37,99,235,0.10)] disabled:cursor-not-allowed disabled:opacity-45 sm:min-h-[88px] sm:px-4`}
   >
     <div
-      className={`flex h-8 w-8 items-center justify-center rounded-sm ${bgColor} text-white shadow-sm ring-1 ring-white/20 sm:h-9 sm:w-9`}
+      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${bgColor} text-white shadow-sm sm:h-11 sm:w-11`}
     >
       {icon}
     </div>
-    <span className="text-center text-[11px] font-semibold leading-snug text-white sm:text-xs">
-      {label}
-    </span>
+    <div className="min-w-0">
+      <div className="truncate text-[12px] font-extrabold text-slate-800 sm:text-sm">
+        {label}
+      </div>
+      <div className="mt-0.5 text-[10px] font-medium text-slate-400 sm:text-[11px]">
+        Yönet
+      </div>
+    </div>
+    <svg className="ml-auto h-4 w-4 shrink-0 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+      <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 010-1.06L10.94 10 7.21 6.27a.75.75 0 011.06-1.06l4.26 4.26a.75.75 0 010 1.06l-4.26 4.24a.75.75 0 01-1.06 0z" clipRule="evenodd" />
+    </svg>
   </button>
 );
 
@@ -2673,35 +2681,11 @@ const userGifOptions = [
   return (
     <div
       ref={modalRef}
-      className={`fixed flex flex-col ${
-        currentView === "loginHistory"
-          ? "w-[90vw] max-w-4xl max-h-[80vh]"
-          : hasInlineDetailView
-            ? "w-[92vw] max-w-2xl h-[82vh] max-h-[82vh]"
-          : currentView === "adminActions"
-            ? "w-[90vw] max-w-3xl max-h-[75vh]"
-            : currentView === "staff"
-              ? "w-[92vw] max-w-2xl h-[74vh] max-h-[74vh] sm:h-[78vh] sm:max-h-[78vh]"
-              : currentView === "webConsole"
-                ? "w-[94vw] max-w-[590px] h-[58vh] min-h-[320px] sm:h-[500px]"
-                : "w-[94vw] max-w-[590px] h-[60vh] sm:h-[500px]"
-      } ${
-        currentView === "loginHistory" ||
-        currentView === "rooms" ||
-        currentView === "members" ||
-        currentView === "banned" ||
-        currentView === "roles" ||
-        currentView === "blockedWords" ||
-        currentView === "bots" ||
-        currentView === "forbiddenNicknames" ||
-        currentView === "statusModes" ||
-        currentView === "adminActions" ||
-        currentView === "radio" ||
-        currentView === "securityPreferences" ||
-        currentView === "sistem"
-          ? "overflow-visible"
-          : "overflow-hidden"
-      } rounded-none bg-slate-100 shadow-2xl z-[100]`}
+      className={`fixed z-[100] flex flex-col overflow-hidden border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.22)] ${
+        currentView === "webConsole"
+          ? "h-[86dvh] w-[96vw] max-w-[1180px]"
+          : "h-[88dvh] w-[96vw] max-w-[1180px]"
+      } rounded-[22px] max-sm:h-[100dvh] max-sm:w-full max-sm:max-w-none max-sm:rounded-none`}
       style={{
         top: "50%",
         left: "50%",
@@ -2711,7 +2695,7 @@ const userGifOptions = [
     >
       {/* Header */}
       <div
-        className="modal-header flex items-center justify-between border-b border-slate-300 bg-slate-100 px-3 py-2 cursor-grab active:cursor-grabbing sm:px-4 sm:py-2.5"
+        className="modal-header flex items-center justify-between border-b border-slate-200 bg-white px-3.5 py-3 cursor-grab active:cursor-grabbing sm:px-5 sm:py-3.5"
         onMouseDown={handleMouseDown}
       >
         <div className="flex min-w-0 items-center gap-2">
@@ -2841,17 +2825,49 @@ const userGifOptions = [
 
       {/* Content */}
       <div
-        className={`relative min-h-0 flex-1 bg-[#e8eef5] ${
-          currentView === "webConsole" ? "p-2 sm:p-3" : "p-2.5 sm:p-3"
+        className={`relative min-h-0 flex-1 bg-[#f6f8fb] ${
+          currentView === "webConsole" ? "p-2 sm:p-4" : "p-3 sm:p-5"
         } ${
           currentView === "rooms" ? "overflow-hidden" : "overflow-y-auto"
         }`}
       >
         {currentView === "main" ? (
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-            {adminItems.map((item, index) => (
-              <AdminCard key={index} {...item} />
-            ))}
+          <div className="mx-auto w-full max-w-[1080px] space-y-4 sm:space-y-5">
+            <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_6px_18px_rgba(15,23,42,0.04)] sm:flex-row sm:items-center sm:justify-between sm:p-5">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-600">ChatsON Yönetim</p>
+                <h3 className="mt-1 text-xl font-black tracking-tight text-slate-900 sm:text-2xl">Genel Bakış</h3>
+                <p className="mt-1 max-w-xl text-xs font-medium leading-5 text-slate-500 sm:text-sm">
+                  Sık kullanılan yönetim araçları tek yerde. Gereksiz katman yok; seçim yapıp doğrudan işlemini tamamla.
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-2 sm:min-w-[360px]">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+                  <div className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Araç</div>
+                  <div className="mt-1 text-lg font-black text-slate-900">{adminItems.length}</div>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+                  <div className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Yetkili</div>
+                  <div className="mt-1 text-lg font-black text-slate-900">{staffUsers?.length ?? "—"}</div>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+                  <div className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Üye</div>
+                  <div className="mt-1 text-lg font-black text-slate-900">{membersUsers?.length ?? "—"}</div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-2 flex items-center justify-between px-1">
+                <h4 className="text-xs font-black uppercase tracking-[0.14em] text-slate-500">Yönetim Araçları</h4>
+                <span className="text-[10px] font-semibold text-slate-400">Yetkine göre gösterilir</span>
+              </div>
+              <div className="grid grid-cols-1 gap-2.5 min-[460px]:grid-cols-2 lg:grid-cols-3">
+                {adminItems.map((item, index) => (
+                  <AdminCard key={index} {...item} />
+                ))}
+              </div>
+            </div>
           </div>
         ) : currentView === "generalSettings" ? (
           <div className="grid grid-cols-2 gap-2 sm:gap-3">

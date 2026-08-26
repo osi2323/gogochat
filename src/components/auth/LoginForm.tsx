@@ -193,30 +193,30 @@ const LoginForm = ({
 
   const inputClassName = isPremium
     ? `w-full rounded-2xl border border-[#ffe8a3]/70 bg-white/82 px-4 ${compact ? "py-2.5" : "py-3"} text-[#071b3d] placeholder:text-slate-500 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] backdrop-blur-xl transition-all focus:border-[#fff6d1] focus:outline-none focus:ring-2 focus:ring-[#fff6d1]/40`
-    : `w-full rounded-2xl border border-white/10 bg-white/[0.055] px-4 pl-11 ${compact ? "py-3.5" : "py-4"} text-slate-100 placeholder:text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-all hover:border-white/15 focus:border-cyan-300/45 focus:bg-white/[0.075] focus:ring-4 focus:ring-cyan-400/10`;
+    : `w-full rounded-xl border border-slate-200 bg-white px-4 pl-11 ${compact ? "py-3.5" : "py-4"} text-slate-900 placeholder:text-slate-400 shadow-sm outline-none transition-all hover:border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100`;
   const labelClassName = isPremium
     ? "mb-2 block text-sm font-semibold text-[#071b3d]"
-    : "mb-2 block text-sm font-bold text-slate-300";
+    : "mb-2 block text-sm font-bold text-slate-700";
   const counterClassName = isPremium
     ? "absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-black"
-    : "absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-600";
+    : "absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400";
   const primaryButtonClassName = isPremium
     ? `premium-liquid-button w-full rounded-2xl px-4 ${compact ? "py-3 text-[15px]" : "py-3"} font-extrabold uppercase tracking-wide text-white disabled:cursor-not-allowed disabled:opacity-60 active:scale-95`
-    : `w-full rounded-2xl border border-violet-300/20 bg-gradient-to-r from-violet-600 via-blue-600 to-cyan-600 px-6 ${compact ? "py-3.5 text-[15px]" : "py-4"} font-black text-white shadow-[0_16px_38px_rgba(37,99,235,0.28)] transition-all hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 active:translate-y-0 active:scale-[0.99]`;
+    : `w-full rounded-xl border border-blue-600 bg-blue-600 px-6 ${compact ? "py-3.5 text-[15px]" : "py-4"} font-black text-white shadow-sm transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.99]`;
   const secondaryButtonClassName = isPremium
     ? "flex-1 rounded-2xl border border-[#ffe8a3]/75 bg-white/72 px-4 py-3 font-semibold text-[#071b3d] backdrop-blur-xl transition-all hover:bg-[#fff6d1]/45 active:scale-95"
-    : "flex-1 rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 font-bold text-slate-300 transition-all hover:border-white/20 hover:bg-white/[0.08] active:scale-[0.99]";
-  const errorClassName = isPremium ? "text-rose-500" : "text-rose-400";
+    : "flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold text-slate-700 transition-all hover:bg-slate-50 active:scale-[0.99]";
+  const errorClassName = isPremium ? "text-rose-500" : "text-rose-600";
   const helperClassName = isPremium ? "text-[#071b3d]/70" : "text-slate-500";
   const modalTitleClassName = isPremium
     ? "text-2xl font-bold text-white flex items-center justify-center gap-2"
-    : "mb-4 text-xl font-black text-white";
+    : "mb-4 text-xl font-black text-slate-900";
   const footerNavClassName = isPremium
     ? "mt-8 border-t border-white/10 pt-5 text-amber-100/70"
-    : "mt-5 border-t border-white/10 pt-4 text-slate-500";
+    : "mt-5 border-t border-slate-200 pt-4 text-slate-500";
   const footerNavItemClassName = isPremium
     ? "text-sm font-medium transition-colors hover:text-amber-300"
-    : "text-xs font-bold text-slate-500 transition-colors hover:text-cyan-300";
+    : "text-xs font-bold text-slate-500 transition-colors hover:text-blue-600";
   const infoModalOverlayClassName =
     "fixed inset-0 z-50 flex items-start justify-center bg-black/35 px-4 pt-24 backdrop-blur-[2px] sm:pt-28";
   const infoModalCardClassName =
