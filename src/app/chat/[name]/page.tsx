@@ -4877,26 +4877,15 @@ function ChatPageContent({
                       setIsMobileSidebarOpen(true);
                     }}
                     className={`relative flex h-8 items-center rounded-xl transition-all active:scale-95 active:opacity-80 ${mobileSoftButtonFrame}`}
-                    aria-label="Tüm kullanıcıları aç"
-                    title="Tüm kullanıcılar"
+                    aria-label="Sitedeki çevrimiçi kişileri aç"
+                    title="Site çevrimiçi"
                   >
                     <div className="flex h-full items-center gap-1 rounded-xl bg-[var(--chat-mobile-control-bg)] px-2.5 text-white backdrop-blur-md">
                       <Flame className="h-3.5 w-3.5 text-amber-300" />
                       <span className="text-[11px] font-black text-white">
-                        {effectiveMobileAllUsersCount}
+                        {desktopOnlineCount}
                       </span>
                     </div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowMobileRoomDesignPicker(true)}
-                    className={`flex h-8 w-8 items-center justify-center rounded-xl transition-all active:scale-95 active:opacity-80 ${mobileSoftButtonFrame}`}
-                    aria-label="Kişisel oda dizaynı seç"
-                    title="Kişisel oda dizaynı"
-                  >
-                    <span className={mobileSoftButtonInner}>
-                      <ImageIcon className="h-3.5 w-3.5" />
-                    </span>
                   </button>
                   <button
                     type="button"
