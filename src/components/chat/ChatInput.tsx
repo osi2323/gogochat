@@ -2716,7 +2716,7 @@ export const ChatInput = ({
       {(showEmojiPicker || showAnimationPicker) && (
         <div
           ref={emojiPickerRef}
-          className="absolute bottom-full left-2 z-50 mb-1.5 w-[min(92vw,360px)] overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-2xl md:left-4 md:mb-2"
+          className="fixed bottom-[72px] left-2 z-[650] w-[min(calc(100vw-16px),380px)] overflow-hidden rounded-2xl border-2 border-zinc-300 bg-white text-zinc-900 shadow-[0_18px_50px_rgba(0,0,0,0.28)] md:absolute md:bottom-full md:left-4 md:z-50 md:mb-2"
         >
           <div className="grid grid-cols-5 gap-1 border-b border-zinc-200 bg-zinc-50 p-1.5">
             <button type="button" onClick={() => { setMobileMediaPickerTab("emoji"); setShowEmojiPicker(true); setShowAnimationPicker(false); }} className={`flex flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[9px] font-black ${mobileMediaPickerTab === "emoji" ? "bg-zinc-900 text-white" : "text-zinc-600"}`}><Smile className="h-4 w-4" />EMOJİ</button>
@@ -2730,8 +2730,8 @@ export const ChatInput = ({
               <AnimationPicker onAnimationSelect={handleAnimationSelect} />
             ) : (
               <MsnEmojiPicker
-                onEmojiSelect={(emojiUrl) => {
-                  handleAnimationSelect(emojiUrl);
+                onEmojiSelect={(emoji) => {
+                  setMessage((prev) => `${prev}${prev ? " " : ""}${emoji}`);
                   setShowEmojiPicker(false);
                 }}
               />

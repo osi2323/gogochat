@@ -146,168 +146,73 @@ const isGuestSessionFromStorage = () => {
   return localStorage.getItem("isGuest") === "true" || !!guestUsername;
 };
 
-type ChatSiteTheme = "default" | "dark" | "ocean" | "rose" | "emerald";
+type ChatSiteTheme = "default" | "dark";
 
 const CHAT_SITE_THEME_VARS: Record<ChatSiteTheme, Record<string, string>> = {
   default: {
-    "--chat-app-bg": "#ffffff",
-    "--chat-sidebar-bg": "#dde3ea",
-    "--chat-panel-bg": "#edf1f5",
-    "--chat-panel-muted": "#e7ecf2",
-    "--chat-card-bg": "#ffffff",
-    "--chat-card-soft-bg": "#f8fafc",
-    "--chat-border": "#b8c2cf",
-    "--chat-header-bg": "#e1e7ee",
-    "--chat-input-shell-bg": "#ffffff",
-    "--chat-input-bg": "#f4f4f5",
-    "--chat-text": "#18181b",
-    "--chat-muted": "#52606f",
+    "--chat-app-bg": "#f2efe9",
+    "--chat-sidebar-bg": "#e8e4dc",
+    "--chat-panel-bg": "#f2efe9",
+    "--chat-panel-muted": "#e5e0d7",
+    "--chat-card-bg": "#fbfaf7",
+    "--chat-card-soft-bg": "#f6f3ed",
+    "--chat-border": "#8e99a6",
+    "--chat-header-bg": "#e7e2d9",
+    "--chat-input-shell-bg": "#f7f4ee",
+    "--chat-input-bg": "#ffffff",
+    "--chat-text": "#171a1f",
+    "--chat-muted": "#59616c",
     "--chat-accent": "#2563eb",
     "--chat-accent-strong": "#1d4ed8",
     "--chat-accent-soft": "#dbeafe",
     "--chat-messages-bg": "transparent",
-    "--chat-mobile-input-bg": "rgba(0,0,0,0.9)",
-    "--chat-mobile-bubble-bg": "#1c1c1e",
-    "--chat-mobile-bubble-text": "#ffffff",
-    "--chat-message-desktop-bg": "#ffffff",
-    "--chat-message-desktop-text": "#18181b",
-    "--chat-message-desktop-border": "#c2ccd7",
-    "--chat-mobile-control-frame": "rgba(255,255,255,0.18)",
-    "--chat-mobile-control-bg": "rgba(0,0,0,0.76)",
-    "--chat-mobile-control-ring": "rgba(253,230,138,0.1)",
-    "--chat-mobile-control-text": "#ffffff",
+    "--chat-mobile-input-bg": "#f7f4ee",
+    "--chat-mobile-bubble-bg": "#ffffff",
+    "--chat-mobile-bubble-text": "#171a1f",
+    "--chat-message-desktop-bg": "#fbfaf7",
+    "--chat-message-desktop-text": "#171a1f",
+    "--chat-message-desktop-border": "#8e99a6",
+    "--chat-mobile-control-frame": "rgba(56,64,74,0.22)",
+    "--chat-mobile-control-bg": "rgba(255,255,255,0.92)",
+    "--chat-mobile-control-ring": "rgba(37,99,235,0.18)",
+    "--chat-mobile-control-text": "#171a1f",
   },
   dark: {
-    "--chat-app-bg": "#070b16",
-    "--chat-sidebar-bg": "#0b1020",
-    "--chat-panel-bg": "#111827",
-    "--chat-panel-muted": "#0f172a",
-    "--chat-card-bg": "#151d2f",
-    "--chat-card-soft-bg": "#101827",
-    "--chat-border": "#263247",
-    "--chat-header-bg": "#101827",
-    "--chat-input-shell-bg": "#0b1020",
-    "--chat-input-bg": "#151d2f",
+    "--chat-app-bg": "#070b12",
+    "--chat-sidebar-bg": "#0c121d",
+    "--chat-panel-bg": "#0c121d",
+    "--chat-panel-muted": "#111927",
+    "--chat-card-bg": "#121b29",
+    "--chat-card-soft-bg": "#0f1723",
+    "--chat-border": "rgba(241,245,249,0.42)",
+    "--chat-header-bg": "#0b1320",
+    "--chat-input-shell-bg": "#0b1320",
+    "--chat-input-bg": "#121b29",
     "--chat-text": "#f8fafc",
-    "--chat-muted": "#a5b4c8",
-    "--chat-accent": "#38bdf8",
-    "--chat-accent-strong": "#0ea5e9",
-    "--chat-accent-soft": "rgba(56,189,248,0.16)",
+    "--chat-muted": "#b7c2d0",
+    "--chat-accent": "#60a5fa",
+    "--chat-accent-strong": "#93c5fd",
+    "--chat-accent-soft": "rgba(96,165,250,0.18)",
     "--chat-messages-bg": "transparent",
-    "--chat-mobile-input-bg": "#07101f",
-    "--chat-mobile-bubble-bg": "#1a2d42",
+    "--chat-mobile-input-bg": "#0b1320",
+    "--chat-mobile-bubble-bg": "#172334",
     "--chat-mobile-bubble-text": "#f8fafc",
-    "--chat-message-desktop-bg": "rgba(21,29,47,0.94)",
+    "--chat-message-desktop-bg": "#121b29",
     "--chat-message-desktop-text": "#f8fafc",
-    "--chat-message-desktop-border": "#263247",
-    "--chat-mobile-control-frame": "rgba(56,189,248,0.28)",
-    "--chat-mobile-control-bg": "rgba(8,18,33,0.9)",
-    "--chat-mobile-control-ring": "rgba(56,189,248,0.24)",
-    "--chat-mobile-control-text": "#ffffff",
-  },
-  ocean: {
-    "--chat-app-bg": "#e8f7fb",
-    "--chat-sidebar-bg": "#d7f0f7",
-    "--chat-panel-bg": "#eaf9fc",
-    "--chat-panel-muted": "#dff4f8",
-    "--chat-card-bg": "#ffffff",
-    "--chat-card-soft-bg": "#f0fbfd",
-    "--chat-border": "#75c7df",
-    "--chat-header-bg": "#e0f2fe",
-    "--chat-input-shell-bg": "#f2fbfd",
-    "--chat-input-bg": "#ffffff",
-    "--chat-text": "#0f172a",
-    "--chat-muted": "#315d70",
-    "--chat-accent": "#0891b2",
-    "--chat-accent-strong": "#0e7490",
-    "--chat-accent-soft": "#cffafe",
-    "--chat-messages-bg": "transparent",
-    "--chat-mobile-input-bg": "#06364a",
-    "--chat-mobile-bubble-bg": "#0e7490",
-    "--chat-mobile-bubble-text": "#ffffff",
-    "--chat-message-desktop-bg": "#ffffff",
-    "--chat-message-desktop-text": "#0f172a",
-    "--chat-message-desktop-border": "#8ad2e5",
-    "--chat-mobile-control-frame": "rgba(103,232,249,0.3)",
-    "--chat-mobile-control-bg": "rgba(6,54,74,0.9)",
-    "--chat-mobile-control-ring": "rgba(103,232,249,0.24)",
-    "--chat-mobile-control-text": "#ffffff",
-  },
-  rose: {
-    "--chat-app-bg": "#fff1f5",
-    "--chat-sidebar-bg": "#ffe4ec",
-    "--chat-panel-bg": "#fff1f5",
-    "--chat-panel-muted": "#ffe4e6",
-    "--chat-card-bg": "#ffffff",
-    "--chat-card-soft-bg": "#fff7f9",
-    "--chat-border": "#f3a7b4",
-    "--chat-header-bg": "#ffe4ec",
-    "--chat-input-shell-bg": "#fff7f9",
-    "--chat-input-bg": "#ffffff",
-    "--chat-text": "#1f1720",
-    "--chat-muted": "#744050",
-    "--chat-accent": "#e11d48",
-    "--chat-accent-strong": "#be123c",
-    "--chat-accent-soft": "#ffe4e6",
-    "--chat-messages-bg": "transparent",
-    "--chat-mobile-input-bg": "#4a1021",
-    "--chat-mobile-bubble-bg": "#be123c",
-    "--chat-mobile-bubble-text": "#ffffff",
-    "--chat-message-desktop-bg": "#ffffff",
-    "--chat-message-desktop-text": "#1f1720",
-    "--chat-message-desktop-border": "#efafba",
-    "--chat-mobile-control-frame": "rgba(251,113,133,0.32)",
-    "--chat-mobile-control-bg": "rgba(74,16,33,0.9)",
-    "--chat-mobile-control-ring": "rgba(251,113,133,0.26)",
-    "--chat-mobile-control-text": "#ffffff",
-  },
-  emerald: {
-    "--chat-app-bg": "#ecfdf5",
-    "--chat-sidebar-bg": "#d9f7e9",
-    "--chat-panel-bg": "#ecfdf5",
-    "--chat-panel-muted": "#dff7ed",
-    "--chat-card-bg": "#ffffff",
-    "--chat-card-soft-bg": "#f3fcf7",
-    "--chat-border": "#75d7ae",
-    "--chat-header-bg": "#dff7ed",
-    "--chat-input-shell-bg": "#f3fcf7",
-    "--chat-input-bg": "#ffffff",
-    "--chat-text": "#102018",
-    "--chat-muted": "#35634e",
-    "--chat-accent": "#059669",
-    "--chat-accent-strong": "#047857",
-    "--chat-accent-soft": "#d1fae5",
-    "--chat-messages-bg": "transparent",
-    "--chat-mobile-input-bg": "#073b2d",
-    "--chat-mobile-bubble-bg": "#0f766e",
-    "--chat-mobile-bubble-text": "#ffffff",
-    "--chat-message-desktop-bg": "#ffffff",
-    "--chat-message-desktop-text": "#102018",
-    "--chat-message-desktop-border": "#83ddb9",
-    "--chat-mobile-control-frame": "rgba(52,211,153,0.32)",
-    "--chat-mobile-control-bg": "rgba(7,59,45,0.9)",
-    "--chat-mobile-control-ring": "rgba(52,211,153,0.24)",
+    "--chat-message-desktop-border": "rgba(241,245,249,0.42)",
+    "--chat-mobile-control-frame": "rgba(241,245,249,0.34)",
+    "--chat-mobile-control-bg": "rgba(12,18,29,0.92)",
+    "--chat-mobile-control-ring": "rgba(147,197,253,0.22)",
     "--chat-mobile-control-text": "#ffffff",
   },
 };
 
-const normalizeChatSiteTheme = (value: unknown): ChatSiteTheme => {
-  if (
-    value === "dark" ||
-    value === "ocean" ||
-    value === "rose" ||
-    value === "emerald"
-  ) {
-    return value;
-  }
-  if (value === "blue") return "ocean";
-  return "dark";
-};
+const normalizeChatSiteTheme = (value: unknown): ChatSiteTheme =>
+  value === "dark" ? "dark" : "default";
 
 const readStoredChatSiteTheme = (): ChatSiteTheme => {
-  if (typeof window === "undefined") return "dark";
-  const stored = localStorage.getItem("chatSiteTheme");
-  return normalizeChatSiteTheme(stored);
+  if (typeof window === "undefined") return "default";
+  return normalizeChatSiteTheme(localStorage.getItem("chatSiteTheme"));
 };
 
 const resolveCurrentDeviceType = () => {
@@ -4085,8 +3990,8 @@ function ChatPageContent({
           .kingmobile-desktop-shell { background: var(--chat-app-bg); color: var(--chat-text); }
           .kingmobile-desktop-shell > .chat-theme-sidebar {
             width: 330px !important;
-            height: calc(100dvh - 160px) !important;
-            margin-top: 160px !important;
+            height: calc(100dvh - 190px) !important;
+            margin-top: 190px !important;
             border-color: var(--chat-border) !important;
             background: var(--chat-sidebar-bg) !important;
           }
@@ -4182,8 +4087,8 @@ function ChatPageContent({
         }
       `}</style>
 
-      <div className="kingmobile-topbar absolute inset-x-0 top-0 z-40 hidden h-[160px] border-b border-slate-800/90 bg-[#060d17]/98 text-white shadow-[0_16px_44px_rgba(0,0,0,0.42)] backdrop-blur-xl md:block">
-        <div className="flex h-[100px] items-center gap-3 overflow-hidden border-b border-slate-800/90 px-4 pr-[400px]">
+      <div className="kingmobile-topbar absolute inset-x-0 top-0 z-40 hidden h-[190px] border-b border-slate-800/90 bg-[#060d17]/98 text-white shadow-[0_16px_44px_rgba(0,0,0,0.42)] backdrop-blur-xl md:block">
+        <div className="flex h-[96px] items-center gap-3 overflow-hidden border-b border-slate-800/90 px-4 pr-[400px]">
           <div className="flex w-[310px] shrink-0 items-center pr-3">
             <div className="relative flex h-[72px] w-full items-center justify-center overflow-hidden rounded-[22px] border-2 border-violet-400/35 bg-gradient-to-br from-violet-600/18 via-blue-500/10 to-cyan-400/10 px-5 shadow-[0_0_34px_rgba(124,58,237,0.18)]">
               {desktopHeaderLogo ? (
@@ -4275,12 +4180,12 @@ function ChatPageContent({
           </div>
         </div>
 
-        <div className="kingmobile-roombar flex h-[106px] items-stretch gap-3 overflow-hidden px-4 py-2">
-          <div className="flex w-[74px] shrink-0 flex-col items-center justify-center gap-1 rounded-xl border border-slate-800 bg-slate-900/55 text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">
+        <div className="kingmobile-roombar flex h-[94px] items-stretch gap-3 overflow-hidden px-4 py-2">
+          <div className="flex w-[74px] shrink-0 flex-col items-center justify-center gap-1 rounded-xl border-2 border-[var(--chat-border)] bg-[var(--chat-card-bg)] text-[10px] font-black uppercase tracking-[0.1em] text-[var(--chat-muted)] shadow-sm">
             <UsersRound className="h-4 w-4" />
             Odalar
           </div>
-          <div className="grid min-w-0 flex-1 grid-flow-col grid-rows-2 auto-cols-[184px] gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="grid min-w-0 flex-1 grid-flow-col grid-rows-2 auto-cols-[206px] gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {desktopRooms.length > 0 ? desktopRooms.map((room) => {
             const active = String(room.name).trim().toLocaleLowerCase("tr-TR") === String(roomDetail?.name || roomName).trim().toLocaleLowerCase("tr-TR");
             return (
@@ -4289,11 +4194,11 @@ function ChatPageContent({
                 type="button"
                 onClick={() => openDesktopRoom(room)}
                 data-active={active ? "true" : "false"}
-                className={`kingmobile-room-button flex h-[42px] min-w-0 items-center gap-2 rounded-xl border px-3 text-xs font-bold transition ${active ? "border-blue-400/70 bg-blue-600/20 text-white shadow-sm" : "border-slate-800 bg-slate-900/65 text-slate-300 hover:border-slate-700 hover:bg-slate-800"}`}
+                className="kingmobile-room-button flex h-[37px] min-w-0 items-center gap-2 rounded-xl border-2 px-3 text-xs font-bold shadow-sm transition hover:-translate-y-px"
               >
                 {room.isPrivate ? <LockKeyhole className="h-3.5 w-3.5 text-amber-300" /> : room.radioPanelLink ? <Radio className="h-3.5 w-3.5 text-cyan-300" /> : <MessageSquare className="h-3.5 w-3.5 text-slate-400" />}
-                <span className="max-w-[145px] truncate">{room.name}</span>
-                <span className={`rounded-full px-2 py-0.5 text-[10px] ${active ? "bg-white/10 text-white" : "bg-slate-800 text-slate-400"}`}>{room.visibleUserCount ?? 0}</span>
+                <span className="min-w-0 flex-1 truncate">{room.name}</span>
+                <span className="rounded-full border border-[var(--chat-border)] bg-[var(--chat-panel-muted)] px-2 py-0.5 text-[10px] text-[var(--chat-muted)]">{room.visibleUserCount ?? 0}</span>
               </button>
             );
           }) : <span className="text-xs text-slate-500">Oda bulunamadı</span>}
@@ -4471,7 +4376,7 @@ function ChatPageContent({
         onDeleteCallHistory={deleteCallHistoryEntry}
       />
 
-      <aside className="kingmobile-right-panel absolute bottom-0 right-0 top-[160px] z-30 hidden w-[330px] flex-col gap-3 overflow-y-auto border-l border-slate-800/90 bg-[#07111c] p-3 text-slate-100 md:flex">
+      <aside className="kingmobile-right-panel absolute bottom-0 right-0 top-[190px] z-30 hidden w-[330px] flex-col gap-3 overflow-y-auto border-l border-slate-800/90 bg-[#07111c] p-3 text-slate-100 md:flex">
         <section className="kingmobile-panel-card rounded-2xl border border-slate-800 bg-[#0b1623] p-4 shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-xs font-black uppercase tracking-[0.1em] text-slate-300">Oda Bilgileri</h3>
@@ -4670,7 +4575,7 @@ function ChatPageContent({
       ) : null}
 
       {/* Chat Area - Daha çok yer kaplayan alan */}
-      <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden md:mr-[330px] md:pt-[160px]">
+      <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden md:mr-[330px] md:pt-[190px]">
         {activeJoinEffect && !disableJoinEffectsEnabled && (
           <div className="join-effect-host">
             <div className="join-effect-banner-wrap">
@@ -4899,6 +4804,17 @@ function ChatPageContent({
                   </button>
                   <button
                     type="button"
+                    onClick={() => setShowMobileSettings(true)}
+                    className={`flex h-8 w-8 items-center justify-center rounded-xl transition-all active:scale-95 active:opacity-80 ${mobileSoftButtonFrame}`}
+                    aria-label="Ayarlar"
+                    title="Ayarlar"
+                  >
+                    <span className={mobileSoftButtonInner}>
+                      <Settings className="h-3.5 w-3.5" />
+                    </span>
+                  </button>
+                  <button
+                    type="button"
                     onClick={handleOpenMobileSafeExitModal}
                     className={`flex h-8 w-8 items-center justify-center rounded-xl transition-all active:scale-95 active:opacity-80 ${mobileSoftButtonFrame}`}
                     aria-label="Çıkış"
@@ -4911,6 +4827,7 @@ function ChatPageContent({
                 </>
               }
               mobileVoiceSlotCount={effectiveMicrophoneLimit}
+              mobileVoiceActiveCount={mobileVoiceUsers.length}
               mobileVoiceSlots={
                 showMobileVoiceSlots ? (
                   <>
@@ -5113,48 +5030,19 @@ function ChatPageContent({
         <div className="pointer-events-none absolute bottom-24 right-3 z-30 flex flex-col items-center gap-2.5 md:hidden">
           <button
             type="button"
-            onClick={() => {
-              setCloseMobileSidebarOnProfileClose(false);
-              setMobileInitialSelectedUser(null);
-              setMobileSidebarTab("room");
-              setIsMobileSidebarOpen(true);
-            }}
-            className={`pointer-events-auto relative flex h-10 w-10 items-center justify-center rounded-full ${mobileSoftButtonFrame}`}
-            aria-label="Oda kişilerini aç"
-          >
-            <span className={mobileSoftButtonInner}>
-              <User className="h-[18px] w-[18px] fill-white stroke-[2.5]" />
-            </span>
-            {!shouldHideInitialMobileSidebarCount ? (
-              <span className="absolute -right-1 -top-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-[#0a84ff] px-1 text-[13px] font-bold leading-none text-white">
-                {effectiveMobileSidebarRoomUsersCount}
-              </span>
-            ) : null}
-          </button>
-          <button
-            type="button"
             onClick={() => setShowMobileMessages(true)}
-            className={`pointer-events-auto relative flex h-10 w-10 items-center justify-center rounded-full ${mobileSoftButtonFrame}`}
+            className={`pointer-events-auto relative flex h-11 w-11 items-center justify-center rounded-2xl ${mobileSoftButtonFrame}`}
             aria-label="Özel mesajları aç"
+            title="Mesajlar"
           >
             <span className={mobileSoftButtonInner}>
-              <MessageSquare className="h-[18px] w-[18px] stroke-[2.5]" />
+              <MessageSquare className="h-[19px] w-[19px] stroke-[2.4]" />
             </span>
             {dmUnreadCount > 0 ? (
-              <span className="absolute -right-1 -top-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-red-500 px-1 text-[13px] font-bold leading-none text-white">
+              <span className="absolute -right-1 -top-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-red-500 px-1 text-[12px] font-black leading-none text-white shadow">
                 {dmUnreadCount > 99 ? "99+" : dmUnreadCount}
               </span>
             ) : null}
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowMobileSettings(true)}
-            className={`pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full ${mobileSoftButtonFrame}`}
-            aria-label="Kullanıcı ayarlarını aç"
-          >
-            <span className={mobileSoftButtonInner}>
-              <Settings className="h-[18px] w-[18px] stroke-[2.5]" />
-            </span>
           </button>
           <button
             type="button"
@@ -5164,19 +5052,18 @@ function ChatPageContent({
                 leaveVoiceChat();
                 return;
               }
-
               localStorage.removeItem("voiceChatOptOut");
               void joinVoiceChat();
             }}
-            className={`pointer-events-auto relative flex h-10 w-10 items-center justify-center rounded-full ${mobileSoftButtonFrame}`}
+            className={`pointer-events-auto relative flex h-11 w-11 items-center justify-center rounded-2xl ${mobileSoftButtonFrame}`}
             aria-label={isInVoiceChat ? "Canlı yayından ayrıl" : "Canlı yayına katıl"}
             title={isInVoiceChat ? "Canlı yayından ayrıl" : "Canlı yayına katıl"}
           >
             <span className={mobileSoftButtonInner}>
-              <Volume2 className="h-[18px] w-[18px] fill-white/20 stroke-[2.5]" />
+              <Volume2 className="h-[19px] w-[19px] stroke-[2.4]" />
             </span>
             {!isInVoiceChat ? (
-              <span className="pointer-events-none absolute h-[2px] w-5 rotate-[-38deg] rounded-full bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.45)]" />
+              <span className="pointer-events-none absolute h-[2px] w-5 rotate-[-38deg] rounded-full bg-current opacity-80" />
             ) : null}
           </button>
         </div>

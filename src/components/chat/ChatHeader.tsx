@@ -10,6 +10,7 @@ type ChatHeaderProps = {
   mobileActions?: React.ReactNode;
   mobileVoiceSlots?: React.ReactNode;
   mobileVoiceSlotCount?: number;
+  mobileVoiceActiveCount?: number;
   mobileBackgroundImage?: string | null;
   onMobileBack?: () => void;
 };
@@ -22,6 +23,7 @@ export const ChatHeader = ({
   mobileActions,
   mobileVoiceSlots,
   mobileVoiceSlotCount = 5,
+  mobileVoiceActiveCount = 0,
   onMobileBack,
 }: ChatHeaderProps) => {
   const displayOwnerLabel = "Oda Sahibi";
@@ -30,52 +32,53 @@ export const ChatHeader = ({
 
   return (
     <>
-      <header
-        className="chat-theme-mobile-header relative overflow-hidden bg-transparent px-2.5 pt-2.5 text-white md:hidden"
-      >
-        <div className="flex items-center justify-between gap-2 rounded-[18px] border border-white/10 bg-black/18 p-1.5 shadow-[0_10px_28px_rgba(0,0,0,0.22)] backdrop-blur-md">
-          <div className="flex min-w-0 items-center gap-1.5">
-            <button
-              type="button"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/8 shadow-[0_4px_14px_rgba(0,0,0,0.22)] transition-all active:scale-95 active:opacity-80"
-              aria-label="Geri"
-              onClick={() => {
-                if (onMobileBack) {
-                  onMobileBack();
-                  return;
-                }
-                if (typeof window !== "undefined") window.history.back();
-              }}
-            >
-              <span className="flex h-full w-full items-center justify-center rounded-xl bg-black/35 backdrop-blur-md">
-                <ChevronLeft className="h-5 w-5 text-white stroke-[2.4]" />
-              </span>
-            </button>
-            <div className="min-w-0 rounded-xl border border-white/10 bg-black/24 px-3 py-1.5">
-              <h1 className="truncate text-[12px] font-black tracking-tight text-white">
-                {decodeURIComponent(name)}
-              </h1>
-              <span className="block truncate text-[8px] font-semibold text-white/60">
-                Sahibi: {decodeURIComponent(displayOwnerUsername)}
-              </span>
+      <header className="chat-theme-mobile-header relative px-2.5 pt-2.5 md:hidden">
+        <div className="overflow-hidden rounded-[20px] border-2 border-[var(--chat-border)] bg-[var(--chat-header-bg)] shadow-[0_10px_24px_rgba(0,0,0,0.14)]">
+          <div className="flex min-h-[52px] items-center justify-between gap-2 border-b border-[var(--chat-border)] px-2.5 py-2">
+            <div className="flex min-w-0 items-center gap-2">
+              <button
+                type="button"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[var(--chat-border)] bg-[var(--chat-card-bg)] text-[var(--chat-text)] shadow-sm active:scale-95"
+                aria-label="Odalar"
+                onClick={() => {
+                  if (onMobileBack) return onMobileBack();
+                  if (typeof window !== "undefined") window.history.back();
+                }}
+              >
+                <ChevronLeft className="h-5 w-5 stroke-[2.3]" />
+              </button>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.45)]" />
+                  <h1 className="truncate text-[13px] font-black tracking-tight text-[var(--chat-text)]">
+                    {decodeURIComponent(name)}
+                  </h1>
+                </div>
+                <span className="mt-0.5 block truncate text-[9px] font-bold text-[var(--chat-muted)]">
+                  Oda sahibi · {decodeURIComponent(displayOwnerUsername)}
+                </span>
+              </div>
             </div>
+            {mobileActions ? <div className="flex shrink-0 items-center gap-1.5">{mobileActions}</div> : null}
           </div>
 
-          {mobileActions ? (
-            <div className="flex shrink-0 items-center gap-1.5">
-              {mobileActions}
+          {mobileVoiceSlots ? (
+            <div className="px-2.5 pb-2.5 pt-2">
+              <div className="mb-1.5 flex items-center justify-between px-1">
+                <span className="text-[9px] font-black uppercase tracking-[0.14em] text-[var(--chat-muted)]">Mikrofon Sahnesi</span>
+                <span className="rounded-full border border-[var(--chat-border)] bg-[var(--chat-card-bg)] px-2 py-0.5 text-[9px] font-black text-[var(--chat-text)]">
+                  {mobileVoiceActiveCount}/{Math.max(1, mobileVoiceSlotCount)}
+                </span>
+              </div>
+              <div
+                className="grid gap-2 rounded-[16px] border border-[var(--chat-border)] bg-[var(--chat-card-soft-bg)] p-2 shadow-inner"
+                style={{ gridTemplateColumns: `repeat(${Math.max(1, mobileVoiceSlotCount)}, minmax(0, 1fr))` }}
+              >
+                {mobileVoiceSlots}
+              </div>
             </div>
           ) : null}
         </div>
-
-        {mobileVoiceSlots ? (
-          <div
-            className="mt-2.5 grid gap-1.5 rounded-[16px] border border-white/8 bg-black/10 p-1.5"
-            style={{ gridTemplateColumns: `repeat(${Math.max(1, mobileVoiceSlotCount)}, minmax(0, 1fr))` }}
-          >
-            {mobileVoiceSlots}
-          </div>
-        ) : null}
       </header>
 
       <header className="chat-theme-header hidden min-h-14 items-center justify-between gap-3 border-b border-zinc-800 bg-zinc-200 px-3 py-2 md:flex sm:h-16 sm:px-6 sm:py-0">

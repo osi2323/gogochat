@@ -487,10 +487,10 @@ const AdminCard = ({
     onClick={onClick}
     disabled={disabled}
     title={title}
-    className={`group flex min-h-[76px] items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3.5 py-3 text-left shadow-[0_6px_18px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-[0_10px_26px_rgba(37,99,235,0.10)] disabled:cursor-not-allowed disabled:opacity-45 sm:min-h-[88px] sm:px-4`}
+    className={`group flex min-h-[82px] items-center gap-3 rounded-[18px] border-2 border-slate-300 bg-white px-3.5 py-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-blue-400 hover:shadow-[0_12px_28px_rgba(37,99,235,0.10)] disabled:cursor-not-allowed disabled:opacity-45 sm:min-h-[92px] sm:px-4`}
   >
     <div
-      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${bgColor} text-white shadow-sm sm:h-11 sm:w-11`}
+      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-[0_6px_16px_rgba(37,99,235,0.20)]"
     >
       {icon}
     </div>
@@ -2570,15 +2570,58 @@ const userGifOptions = [
       : []),
   ];
 
-  // ChatsON V4: Ayarlar tek giriş noktasından yönetilir.
   const settingsItems: Array<{
     icon: React.ReactNode;
     label: string;
+    description: string;
     bgColor: string;
     onClick: () => void;
     disabled?: boolean;
     title?: string;
-  }> = [];
+  }> = [
+    ...(canAccessSiteSettings
+      ? [
+          {
+            icon: (
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            ),
+            label: "Sistem",
+            description: "Site, giriş, görünüm ve temel davranışlar",
+            bgColor: "bg-blue-600",
+            onClick: () => setCurrentView("sistem"),
+          },
+        ]
+      : []),
+    {
+      icon: (
+        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+        </svg>
+      ),
+      label: "Durum Modları",
+      description: "Çatıda, meşgul ve kullanıcı durumları",
+      bgColor: "bg-blue-600",
+      onClick: () => setCurrentView("statusModes"),
+    },
+    ...(canAccessSiteSettings
+      ? [
+          {
+            icon: (
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            ),
+            label: "Güvenlik",
+            description: "Giriş, izin ve güvenlik tercihleri",
+            bgColor: "bg-blue-600",
+            onClick: () => setCurrentView("securityPreferences"),
+          },
+        ]
+      : []),
+  ];
 
   const hasInlineDetailView = Boolean(
     selectedAdminAction || selectedStaff || selectedMember || selectedRole,
@@ -2587,7 +2630,7 @@ const userGifOptions = [
   return (
     <div
       ref={modalRef}
-      className={`fixed z-[100] flex flex-col overflow-hidden border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.22)] ${
+      className={`fixed z-[100] flex flex-col overflow-hidden border-2 border-slate-300 bg-[#eef1f5] shadow-[0_30px_100px_rgba(15,23,42,0.28)] ${
         currentView === "webConsole"
           ? "h-[86dvh] w-[96vw] max-w-[1180px]"
           : "h-[88dvh] w-[96vw] max-w-[1180px]"
@@ -2601,7 +2644,7 @@ const userGifOptions = [
     >
       {/* Header */}
       <div
-        className="modal-header flex items-center justify-between border-b border-slate-200 bg-white px-3.5 py-3 cursor-grab active:cursor-grabbing sm:px-5 sm:py-3.5"
+        className="modal-header flex items-center justify-between border-b border-slate-700 bg-[#111827] px-3.5 py-3 text-white cursor-grab active:cursor-grabbing sm:px-5 sm:py-3.5"
         onMouseDown={handleMouseDown}
       >
         <div className="flex min-w-0 items-center gap-2">
@@ -2636,7 +2679,7 @@ const userGifOptions = [
                 }
               }}
               onMouseDown={(e) => e.stopPropagation()}
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gray-200 text-gray-600 transition-colors hover:bg-gray-300 hover:text-gray-800 sm:h-8 sm:w-8"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-white/10 text-white transition-colors hover:bg-white/20 sm:h-8 sm:w-8"
             >
               <svg
                 className="h-4 w-4"
@@ -2653,7 +2696,7 @@ const userGifOptions = [
               </svg>
             </button>
           )}
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-600 sm:h-8 sm:w-8">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-blue-400/30 bg-blue-500/20 sm:h-8 sm:w-8">
             <svg
               className="h-4 w-4 text-white"
               fill="none"
@@ -2668,7 +2711,7 @@ const userGifOptions = [
               />
             </svg>
           </div>
-          <h2 className="truncate text-sm font-semibold text-gray-800 sm:text-base">
+          <h2 className="truncate text-sm font-black tracking-tight text-white sm:text-base">
             {currentView === "main"
               ? "Admin Paneli"
               : currentView === "generalSettings"
@@ -2711,7 +2754,7 @@ const userGifOptions = [
             onClose();
           }}
           onMouseDown={(e) => e.stopPropagation()}
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gray-200 text-gray-600 transition-colors hover:bg-gray-300 hover:text-gray-800 sm:h-8 sm:w-8"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-white/10 text-white transition-colors hover:bg-white/20 sm:h-8 sm:w-8"
         >
           <svg
             className="h-4 w-4"
@@ -2731,7 +2774,7 @@ const userGifOptions = [
 
       {/* Content */}
       <div
-        className={`relative min-h-0 flex-1 bg-[#f6f8fb] ${
+        className={`relative min-h-0 flex-1 bg-[#eef1f5] ${
           currentView === "webConsole" ? "p-2 sm:p-4" : "p-3 sm:p-5"
         } ${
           currentView === "rooms" ? "overflow-hidden" : "overflow-y-auto"
@@ -2739,7 +2782,7 @@ const userGifOptions = [
       >
         {currentView === "main" ? (
           <div className="mx-auto w-full max-w-[1080px] space-y-4 sm:space-y-5">
-            <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_6px_18px_rgba(15,23,42,0.04)] sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <div className="flex flex-col gap-4 rounded-[22px] border-2 border-slate-300 bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.06)] sm:flex-row sm:items-center sm:justify-between sm:p-5">
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-600">ChatsON Yönetim</p>
                 <h3 className="mt-1 text-xl font-black tracking-tight text-slate-900 sm:text-2xl">Genel Bakış</h3>
@@ -2776,25 +2819,29 @@ const userGifOptions = [
             </div>
           </div>
         ) : currentView === "generalSettings" ? (
-          <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            {settingsItems.map((item, index) => (
-              <button
-                key={index}
-                onClick={item.onClick}
-                disabled={Boolean(item.disabled)}
-                title={item.title}
-                className={`flex min-h-[108px] flex-col items-center justify-center gap-2 rounded-sm border px-3 py-3 shadow-sm transition-colors duration-200 sm:min-h-[124px] sm:p-4 ${getAdminTileSurfaceClass(item.bgColor, Boolean(item.disabled))}`}
-              >
-                <div
-                  className={`flex h-11 w-11 items-center justify-center rounded-sm ${item.bgColor} text-white shadow-sm ring-1 ring-white/20 sm:h-14 sm:w-14`}
+          <div className="mx-auto max-w-[920px] space-y-4">
+            <div className="rounded-[20px] border-2 border-slate-300 bg-white p-4 shadow-sm sm:p-5">
+              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-blue-600">Tek Ayar Merkezi</div>
+              <h3 className="mt-1 text-xl font-black text-slate-900">Genel Ayarlar</h3>
+              <p className="mt-1 text-sm font-medium text-slate-500">Aynı işi yapan tekrar menüler kaldırıldı. Temel tercihler üç net başlık altında.</p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {settingsItems.map((item, index) => (
+                <button
+                  key={index}
+                  onClick={item.onClick}
+                  disabled={Boolean(item.disabled)}
+                  title={item.title}
+                  className="group flex min-h-[116px] items-start gap-3 rounded-[18px] border-2 border-slate-300 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-blue-400 hover:shadow-[0_12px_28px_rgba(37,99,235,0.10)] disabled:opacity-50"
                 >
-                  {item.icon}
-                </div>
-                <span className="text-center text-[11px] font-semibold leading-snug text-white sm:text-sm">
-                  {item.label}
-                </span>
-              </button>
-            ))}
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">{item.icon}</span>
+                  <span className="min-w-0">
+                    <span className="block text-sm font-black text-slate-900">{item.label}</span>
+                    <span className="mt-1 block text-xs font-medium leading-5 text-slate-500">{item.description}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         ) : currentView === "rooms" ? (
           <RoomsView
