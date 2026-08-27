@@ -2,7 +2,6 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "@/services/apiClient";
-import { getClientApiClient } from "@/lib/api/clientApi";
 import { Room } from "@/services/roomService";
 
 type RoomsViewProps = {
@@ -26,8 +25,6 @@ type RoomForm = {
   description: string;
   maxUsers: number;
   visibleUserCount: number;
-  microphoneLimit: number;
-  microphoneStageHidden: boolean;
   isPrivate: boolean;
   password: string;
   radioPanelLink: string;
@@ -36,7 +33,9 @@ type RoomForm = {
   minStar: number;
   backgroundColor: string;
   roomImage: string;
+  logo: string;
   roomImageFile: File | null;
+  logoFile: File | null;
 };
 
 const RENAME_LOCKED_ROOM_NAMES = new Set([
@@ -69,8 +68,6 @@ export const RoomsView = ({
       description: "",
       maxUsers: 200,
       visibleUserCount: 15,
-      microphoneLimit: 5,
-      microphoneStageHidden: false,
       isPrivate: false,
       // isEditable backend default true, gönderilmiyor
       password: "",
@@ -80,7 +77,9 @@ export const RoomsView = ({
       minStar: 0,
       backgroundColor: "#e5e7eb",
       roomImage: "",
+      logo: "",
       roomImageFile: null,
+      logoFile: null,
     }),
     [],
   );
@@ -142,10 +141,7 @@ export const RoomsView = ({
     const loadOwnerOptions = async () => {
       try {
         setOwnersLoading(true);
-        const client = getClientApiClient();
-        // Oda sahibi listesinde normal üyeleri değil,
-        // yalnızca rütbesi/yıldızı olan yetkilileri getir.
-        const response = await client.get("/user/star-users", {
+        const response = await apiClient.get("/user", {
           params: { _ts: Date.now() },
         });
 
@@ -212,8 +208,6 @@ export const RoomsView = ({
       description: room.description ?? "",
       maxUsers: room.maxUsers ?? 0,
       visibleUserCount: room.visibleUserCount ?? 0,
-      microphoneLimit: Math.max(1, room.microphoneLimit ?? 5),
-      microphoneStageHidden: room.microphoneStageHidden ?? false,
       isPrivate: room.isPrivate ?? false,
       // isEditable backend default true, gönderilmiyor
       password: "",
@@ -223,7 +217,9 @@ export const RoomsView = ({
       minStar: room.minStar ?? 0,
       backgroundColor: room.backgroundColor || "#e5e7eb",
       roomImage: room.roomImage ?? "",
+      logo: room.logo ?? "",
       roomImageFile: null,
+      logoFile: null,
     });
     setSaveError(null);
     setIsModalOpen(true);
@@ -343,8 +339,6 @@ export const RoomsView = ({
       appendIfPresent("description", form.description);
       appendIfPresent("maxUsers", form.maxUsers);
       appendIfPresent("visibleUserCount", form.visibleUserCount);
-      appendIfPresent("microphoneLimit", Math.max(1, form.microphoneLimit));
-      appendIfPresent("microphoneStageHidden", form.microphoneStageHidden);
       if (canEncryptRooms) {
         appendIfPresent("isPrivate", form.isPrivate);
         appendIfPresent("password", form.password);
@@ -367,8 +361,10 @@ export const RoomsView = ({
       appendIfPresent("minStar", form.minStar);
       appendIfPresent("backgroundColor", form.backgroundColor);
       appendIfPresent("roomImage", form.roomImage);
+      appendIfPresent("logo", form.logo);
       if (form.roomImageFile)
         payload.append("roomImageFile", form.roomImageFile);
+      if (form.logoFile) payload.append("logoFile", form.logoFile);
 
       try {
         setIsSaving(true);
@@ -412,11 +408,6 @@ export const RoomsView = ({
       form.visibleUserCount,
       selectedRoom.visibleUserCount,
     );
-    appendIfChanged(
-      "microphoneLimit",
-      form.microphoneLimit,
-      selectedRoom.microphoneLimit,
-    );
     if (canEncryptRooms) {
       appendIfChanged("isPrivate", form.isPrivate, selectedRoom.isPrivate);
       if (form.password.trim().length > 0) {
@@ -457,9 +448,13 @@ export const RoomsView = ({
       selectedRoom.backgroundColor,
     );
     appendIfChanged("roomImage", form.roomImage, selectedRoom.roomImage);
+    appendIfChanged("logo", form.logo, selectedRoom.logo);
 
     if (form.roomImageFile) {
       payload.append("roomImageFile", form.roomImageFile);
+    }
+    if (form.logoFile) {
+      payload.append("logoFile", form.logoFile);
     }
 
     if ([...payload.keys()].length === 0) {
@@ -735,7 +730,7 @@ export const RoomsView = ({
                         ))}
                       </select>
                       <p className="text-[10px] text-zinc-500 font-medium ml-1">
-                        Oda sahibi yalnızca rütbeli / yetkili kullanıcılar arasından seçilir.
+                        Oda sahibi kayıtlı üyeler arasından seçilir.
                       </p>
                     </div>
                   </div>
@@ -799,43 +794,6 @@ export const RoomsView = ({
                           )
                         }
                       />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-zinc-700 ml-1">
-                        MİKROFON SINIRI
-                      </label>
-                      <input
-                        type="number"
-                        min={1}
-                        max={20}
-                        className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
-                        value={form.microphoneLimit}
-                        onChange={(e) => {
-                          const value = Number(e.target.value);
-                          handleChange(
-                            "microphoneLimit",
-                            Number.isFinite(value) ? Math.max(1, Math.min(20, value)) : 1,
-                          );
-                        }}
-                      />
-                      <label className="mt-2 flex cursor-pointer items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 transition hover:bg-white">
-                        <input
-                          type="checkbox"
-                          checked={form.microphoneStageHidden}
-                          onChange={(e) =>
-                            handleChange("microphoneStageHidden", e.target.checked)
-                          }
-                          className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        <span className="min-w-0">
-                          <span className="block text-[11px] font-black text-zinc-800">
-                            MİKROFON SAHNESİNİ KALDIR
-                          </span>
-                          <span className="block text-[9px] font-medium text-zinc-500">
-                            İşaretlenirse odada mikrofon sahnesi görünmez.
-                          </span>
-                        </span>
-                      </label>
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-zinc-700 ml-1">
@@ -1005,6 +963,17 @@ export const RoomsView = ({
                           />
                         </div>
                       </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-zinc-700 ml-1">
+                          LOGO LİNKİ (OPSİYONEL)
+                        </label>
+                        <input
+                          className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 focus:bg-white focus:border-blue-500 transition-all outline-none"
+                          value={form.logo ?? ""}
+                          onChange={(e) => handleChange("logo", e.target.value)}
+                          placeholder="https://example.com/logo.png"
+                        />
+                      </div>
                     </div>
                     <div className="space-y-2.5 sm:space-y-3">
                       <div className="space-y-1.5">
@@ -1051,7 +1020,50 @@ export const RoomsView = ({
                           />
                         </div>
                       </div>
-                      
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between ml-1">
+                          <label className="text-xs font-bold text-zinc-700">
+                            LOGO YÜKLE
+                          </label>
+                          {form.logo && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleChange("logo", "");
+                                handleChange("logoFile", null);
+                              }}
+                              className="text-xs text-red-500 hover:text-red-700 font-semibold transition-colors"
+                            >
+                              Kaldır
+                            </button>
+                          )}
+                        </div>
+                        {form.logo && (
+                          <div className="relative w-full h-20 rounded-xl overflow-hidden border border-zinc-200 bg-zinc-100 flex items-center justify-center">
+                            <img
+                              src={
+                                form.logo.startsWith("http")
+                                  ? form.logo
+                                  : `${(process.env.NEXT_PUBLIC_IMAGE_ACCESS_URL ?? "").replace(/\/$/, "")}/${form.logo.replace(/^\/+/, "")}`
+                              }
+                              alt="Oda logosu"
+                              className="max-h-full max-w-full object-contain"
+                            />
+                          </div>
+                        )}
+                        <div className="relative group">
+                          <input
+                            type="file"
+                            className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100 cursor-pointer"
+                            onChange={(e) =>
+                              handleChange(
+                                "logoFile",
+                                e.target.files?.[0] ?? null,
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
