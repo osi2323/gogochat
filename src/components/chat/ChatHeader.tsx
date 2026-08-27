@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronUp } from "lucide-react";
 
 type ChatHeaderProps = {
   name: string;
@@ -11,6 +11,8 @@ type ChatHeaderProps = {
   mobileVoiceSlots?: React.ReactNode;
   mobileVoiceSlotCount?: number;
   mobileVoiceActiveCount?: number;
+  mobileVoiceStageCollapsed?: boolean;
+  onToggleMobileVoiceStage?: () => void;
   mobileBackgroundImage?: string | null;
   onMobileBack?: () => void;
 };
@@ -24,6 +26,8 @@ export const ChatHeader = ({
   mobileVoiceSlots,
   mobileVoiceSlotCount = 0,
   mobileVoiceActiveCount = 0,
+  mobileVoiceStageCollapsed = false,
+  onToggleMobileVoiceStage,
   onMobileBack,
 }: ChatHeaderProps) => {
   const displayOwnerLabel = "Oda Sahibi";
@@ -63,19 +67,30 @@ export const ChatHeader = ({
           </div>
 
           {mobileVoiceSlotCount > 0 && mobileVoiceSlots ? (
-            <div className="px-2.5 pb-2.5 pt-2">
+            <div className={`relative border-t border-[var(--chat-border)] px-2.5 pt-2 ${mobileVoiceStageCollapsed ? "pb-1.5" : "pb-3"}`}>
               <div className="mb-1.5 flex items-center justify-between px-1">
-                <span className="text-[9px] font-black uppercase tracking-[0.14em] text-[var(--chat-muted)]">Ses Sahnesi</span>
+                <span className="text-[9px] font-black uppercase tracking-[0.14em] text-[var(--chat-muted)]">
+                  Ses Sahnesi
+                </span>
                 <span className="rounded-full border border-[var(--chat-border)] bg-[var(--chat-card-bg)] px-2 py-0.5 text-[9px] font-black text-[var(--chat-text)]">
                   {mobileVoiceActiveCount}/{mobileVoiceSlotCount}
                 </span>
               </div>
               <div
-                className="grid gap-2 rounded-[16px] border border-[var(--chat-border)] bg-[var(--chat-card-soft-bg)] p-2 shadow-inner"
+                className={`grid rounded-[16px] border border-[var(--chat-border)] bg-[var(--chat-card-soft-bg)] shadow-inner transition-all duration-200 ${mobileVoiceStageCollapsed ? "gap-1 p-1" : "gap-2 p-2"}`}
                 style={{ gridTemplateColumns: `repeat(${mobileVoiceSlotCount}, minmax(0, 1fr))` }}
               >
                 {mobileVoiceSlots}
               </div>
+              <button
+                type="button"
+                onClick={onToggleMobileVoiceStage}
+                className="absolute -bottom-3 left-1/2 z-20 flex h-6 w-12 -translate-x-1/2 items-center justify-center rounded-b-xl border-x border-b border-[var(--chat-border)] bg-[var(--chat-header-bg)] text-[var(--chat-muted)] shadow-md active:scale-95"
+                aria-label={mobileVoiceStageCollapsed ? "Mikrofon sahnesini genişlet" : "Mikrofon sahnesini daralt"}
+                title={mobileVoiceStageCollapsed ? "Sahneyi genişlet" : "Sahneyi daralt"}
+              >
+                {mobileVoiceStageCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+              </button>
             </div>
           ) : null}
         </div>

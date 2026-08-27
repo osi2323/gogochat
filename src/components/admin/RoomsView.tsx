@@ -27,6 +27,7 @@ type RoomForm = {
   maxUsers: number;
   visibleUserCount: number;
   microphoneLimit: number;
+  microphoneStageHidden: boolean;
   isPrivate: boolean;
   password: string;
   radioPanelLink: string;
@@ -69,6 +70,7 @@ export const RoomsView = ({
       maxUsers: 200,
       visibleUserCount: 15,
       microphoneLimit: 5,
+      microphoneStageHidden: false,
       isPrivate: false,
       // isEditable backend default true, gönderilmiyor
       password: "",
@@ -210,7 +212,8 @@ export const RoomsView = ({
       description: room.description ?? "",
       maxUsers: room.maxUsers ?? 0,
       visibleUserCount: room.visibleUserCount ?? 0,
-      microphoneLimit: room.microphoneLimit ?? 5,
+      microphoneLimit: Math.max(1, room.microphoneLimit ?? 5),
+      microphoneStageHidden: room.microphoneStageHidden ?? false,
       isPrivate: room.isPrivate ?? false,
       // isEditable backend default true, gönderilmiyor
       password: "",
@@ -340,7 +343,8 @@ export const RoomsView = ({
       appendIfPresent("description", form.description);
       appendIfPresent("maxUsers", form.maxUsers);
       appendIfPresent("visibleUserCount", form.visibleUserCount);
-      appendIfPresent("microphoneLimit", form.microphoneLimit);
+      appendIfPresent("microphoneLimit", Math.max(1, form.microphoneLimit));
+      appendIfPresent("microphoneStageHidden", form.microphoneStageHidden);
       if (canEncryptRooms) {
         appendIfPresent("isPrivate", form.isPrivate);
         appendIfPresent("password", form.password);
@@ -802,15 +806,36 @@ export const RoomsView = ({
                       </label>
                       <input
                         type="number"
-                        min={0}
+                        min={1}
                         max={20}
                         className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
                         value={form.microphoneLimit}
                         onChange={(e) => {
                           const value = Number(e.target.value);
-                          handleChange("microphoneLimit", Number.isFinite(value) ? Math.max(0, Math.min(20, value)) : 0);
+                          handleChange(
+                            "microphoneLimit",
+                            Number.isFinite(value) ? Math.max(1, Math.min(20, value)) : 1,
+                          );
                         }}
                       />
+                      <label className="mt-2 flex cursor-pointer items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 transition hover:bg-white">
+                        <input
+                          type="checkbox"
+                          checked={form.microphoneStageHidden}
+                          onChange={(e) =>
+                            handleChange("microphoneStageHidden", e.target.checked)
+                          }
+                          className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="min-w-0">
+                          <span className="block text-[11px] font-black text-zinc-800">
+                            MİKROFON SAHNESİNİ KALDIR
+                          </span>
+                          <span className="block text-[9px] font-medium text-zinc-500">
+                            İşaretlenirse odada mikrofon sahnesi görünmez.
+                          </span>
+                        </span>
+                      </label>
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-zinc-700 ml-1">

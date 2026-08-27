@@ -1152,6 +1152,28 @@ function ChatPageContent({
   });
   const [showMobileMessages, setShowMobileMessages] = useState(false);
   const [showMobileSettings, setShowMobileSettings] = useState(false);
+  const [isMobileVoiceStageCollapsed, setIsMobileVoiceStageCollapsed] =
+    useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setIsMobileVoiceStageCollapsed(
+      localStorage.getItem("chatson:mobileVoiceStageCollapsed") === "true",
+    );
+  }, []);
+
+  const toggleMobileVoiceStage = useCallback(() => {
+    setIsMobileVoiceStageCollapsed((current) => {
+      const next = !current;
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "chatson:mobileVoiceStageCollapsed",
+          String(next),
+        );
+      }
+      return next;
+    });
+  }, []);
   const [chatSiteTheme, setChatSiteTheme] =
     useState<ChatSiteTheme>("dark");
   const [dmUnreadCount, setDmUnreadCount] = useState(0);
@@ -1350,7 +1372,7 @@ function ChatPageContent({
     roomUsers,
   ]);
   const effectiveMicrophoneLimit = Math.max(
-    0,
+    1,
     Math.min(10, Number(roomDetail?.microphoneLimit ?? 5)),
   );
 
@@ -3720,7 +3742,8 @@ function ChatPageContent({
   const mobileInputShellClassName =
     "bg-[var(--chat-mobile-input-bg)]";
   const showMobileVoiceSlots =
-    communicationPermissions?.showMicrophonesOnMobile !== false;
+    communicationPermissions?.showMicrophonesOnMobile !== false &&
+    roomDetail?.microphoneStageHidden !== true;
   const activeMobileVoiceMenuUser = showMobileVoiceSlots
     ? mobileVoiceUsers.find(
         (user) =>
@@ -4781,8 +4804,14 @@ function ChatPageContent({
                   </button>
                 </>
               }
-              mobileVoiceSlotCount={effectiveMicrophoneLimit}
+              mobileVoiceSlotCount={
+                roomDetail?.microphoneStageHidden === true
+                  ? 0
+                  : effectiveMicrophoneLimit
+              }
               mobileVoiceActiveCount={mobileVoiceUsers.length}
+              mobileVoiceStageCollapsed={isMobileVoiceStageCollapsed}
+              onToggleMobileVoiceStage={toggleMobileVoiceStage}
               mobileVoiceSlots={
                 showMobileVoiceSlots ? (
                   <>
@@ -4812,7 +4841,7 @@ function ChatPageContent({
                           className="flex h-8 w-full items-center gap-1.5 whitespace-nowrap border-b border-zinc-200/80 px-2.5 text-left text-red-500"
                         >
                           <Power className="h-4 w-4" />
-                          <span>Mikrofon bırak</span>
+                          <span>Miki bırak</span>
                         </button>
                         <button
                           type="button"
@@ -4825,7 +4854,7 @@ function ChatPageContent({
                             <MicOff className="h-4 w-4" />
                           )}
                           <span>
-                            {isMuted ? "Mikrofonu aç" : "Mikrofonu kapat"}
+                            {isMuted ? "Sesi aç" : "Sessize al"}
                           </span>
                         </button>
                       </div>
@@ -4845,15 +4874,17 @@ function ChatPageContent({
                           title="Sese katıl"
                         >
                           <span
-                            className={`flex h-12 w-12 items-center justify-center rounded-full transition-transform active:scale-95 ${mobileSoftButtonFrame}`}
+                            className={`flex items-center justify-center rounded-full transition-all active:scale-95 ${isMobileVoiceStageCollapsed ? "h-8 w-8" : "h-12 w-12"} ${mobileSoftButtonFrame}`}
                           >
                             <span className={mobileSoftButtonInner}>
                               <MicOff className="h-5 w-5" />
                             </span>
                           </span>
-                          <span className="w-full truncate text-center text-[10px] font-medium text-white drop-shadow-sm">
-                            Bize katıl
-                          </span>
+                          {!isMobileVoiceStageCollapsed ? (
+                            <span className="w-full truncate text-center text-[10px] font-medium text-white drop-shadow-sm">
+                              Bize katıl
+                            </span>
+                          ) : null}
                         </button>
                       );
                     }
@@ -4910,7 +4941,7 @@ function ChatPageContent({
                         }
                       >
                         <span
-                          className={`relative flex h-12 w-12 items-center justify-center rounded-full transition-transform active:scale-95 ${mobileSoftButtonFrame} ${
+                          className={`relative flex ${isMobileVoiceStageCollapsed ? "h-8 w-8" : "h-12 w-12"} items-center justify-center rounded-full transition-transform active:scale-95 ${mobileSoftButtonFrame} ${
                             isSpeaking && !isVoiceMuted
                               ? "ring-2 ring-emerald-300"
                               : ""
@@ -4951,9 +4982,11 @@ function ChatPageContent({
                             )}
                           </span>
                         </span>
+{!isMobileVoiceStageCollapsed ? (
                         <span className="w-full truncate text-center text-[10px] font-medium text-white drop-shadow-sm">
                           {displayName || voiceUsername}
                         </span>
+                        ) : null}
                       </button>
                       );
                     })}

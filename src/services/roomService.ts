@@ -30,6 +30,7 @@ export interface Room {
   maxUsers: number;
   visibleUserCount: number;
   microphoneLimit: number;
+  microphoneStageHidden?: boolean;
   isPrivate: boolean;
   isEditable?: boolean;
   radioPanelLink: string;
