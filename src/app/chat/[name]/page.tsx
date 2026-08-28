@@ -4446,9 +4446,12 @@ function ChatPageContent({
           setIsMobileSidebarOpen(true);
         }}
         className="fixed right-0 top-1/2 z-[105] flex h-14 w-9 -translate-y-1/2 items-center justify-center rounded-l-[18px] border-2 border-r-0 border-cyan-300/40 bg-[#08111f]/96 text-white shadow-[-8px_8px_28px_rgba(0,0,0,0.34)] backdrop-blur-xl transition active:scale-95 md:hidden"
-        aria-label="Kişi listesini aç"
-        title="Kişiler"
+        aria-label={`Odadaki kişileri aç (${sidebarCounts.roomUsersCount})`}
+        title={`Odadakiler: ${sidebarCounts.roomUsersCount}`}
       >
+        <span className="absolute -left-7 top-1/2 flex min-w-7 -translate-y-1/2 items-center justify-center rounded-l-full border border-r-0 border-cyan-300/40 bg-[#08111f]/96 px-1.5 py-1 text-[10px] font-black leading-none text-cyan-100 shadow-[-5px_4px_16px_rgba(0,0,0,0.28)]">
+          {sidebarCounts.roomUsersCount}
+        </span>
         <UserRound className="h-5 w-5 text-violet-200" />
       </button>
 
@@ -4473,13 +4476,7 @@ function ChatPageContent({
                 : "rounded-l-[20px] border-r-0"
             }`}
           >
-            {(mobileSidebarTab === "room" || mobileSidebarTab === "all") ? (
-              <div className="absolute left-2 right-2 top-3 z-20 grid grid-cols-2 gap-1.5 rounded-xl border border-zinc-200 bg-white/95 p-1.5 shadow-sm">
-                <button type="button" onClick={() => setMobileSidebarTab("room")} className={`rounded-lg px-2 py-1.5 text-[10px] font-black ${mobileSidebarTab === "room" ? "bg-zinc-900 text-white" : "text-zinc-500"}`}>ODADAKİLER</button>
-                <button type="button" onClick={() => setMobileSidebarTab("all")} className={`rounded-lg px-2 py-1.5 text-[10px] font-black ${mobileSidebarTab === "all" ? "bg-zinc-900 text-white" : "text-zinc-500"}`}>TÜM KİŞİLER</button>
-              </div>
-            ) : null}
-            <div className={(mobileSidebarTab === "room" || mobileSidebarTab === "all") ? "h-full pt-12" : "h-full"}>
+            <div className="h-full">
             <ChatSidebar
               users={roomUsers}
               forceVisible
