@@ -63,6 +63,7 @@ import {
   UserRound,
   UsersRound,
   Volume2,
+  Dice5,
   X,
 } from "lucide-react";
 import {
@@ -1109,9 +1110,22 @@ function ChatPageContent({
   const [showManageModal, setShowManageModal] = useState(false);
   const [showClearHistoryModal, setShowClearHistoryModal] = useState(false);
   const [showMobileSafeExitModal, setShowMobileSafeExitModal] = useState(false);
+  const [sorubazLeaderboard, setSorubazLeaderboard] = useState<Array<{ username: string; points: number; wins: number }>>([]);
+  const isSorubazRoom = /sorubaz|soru[- ]?cevap/i.test(roomName || "");
+
   const [mobileSafeExitClearDirect, setMobileSafeExitClearDirect] =
     useState(false);
   const [mobileSafeExitClearRoom, setMobileSafeExitClearRoom] = useState(false);
+
+  useEffect(() => {
+    if (!socket || !isSorubazRoom) return;
+    const onLeaderboard = (payload: { game?: string; rows?: Array<{ username: string; points: number; wins: number }> }) => {
+      if (payload?.game === "sorubaz") setSorubazLeaderboard(payload.rows || []);
+    };
+    socket.on("game:leaderboard", onLeaderboard);
+    socket.emit("game:leaderboard:get", { room: roomId || roomName });
+    return () => { socket.off("game:leaderboard", onLeaderboard); };
+  }, [socket, isSorubazRoom, roomId, roomName]);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [activeMobileVoiceMenuUsername, setActiveMobileVoiceMenuUsername] =
     useState<string | null>(null);
@@ -5032,26 +5046,42 @@ function ChatPageContent({
           <button
             type="button"
             onClick={() => {
-              if (isInVoiceChat) {
-                localStorage.setItem("voiceChatOptOut", "true");
-                leaveVoiceChat();
+              if (!socket?.connected) {
+                toast.error("Sunucu bağlantısı yok.");
                 return;
               }
-              localStorage.removeItem("voiceChatOptOut");
-              void joinVoiceChat();
+              socket.emit("room:dice:roll", {
+                room: roomId || roomName,
+                username: currentUsername,
+              });
             }}
             className={`pointer-events-auto relative flex h-11 w-11 items-center justify-center rounded-2xl ${mobileSoftButtonFrame}`}
-            aria-label={isInVoiceChat ? "Canlı yayından ayrıl" : "Canlı yayına katıl"}
-            title={isInVoiceChat ? "Canlı yayından ayrıl" : "Canlı yayına katıl"}
+            aria-label="Zar at"
+            title="Odaya zar at"
           >
             <span className={mobileSoftButtonInner}>
-              <Volume2 className="h-[19px] w-[19px] stroke-[2.4]" />
+              <Dice5 className="h-[20px] w-[20px] stroke-[2.2]" />
             </span>
-            {!isInVoiceChat ? (
-              <span className="pointer-events-none absolute h-[2px] w-5 rotate-[-38deg] rounded-full bg-current opacity-80" />
-            ) : null}
           </button>
         </div>
+
+        {isSorubazRoom && sorubazLeaderboard.length > 0 ? (
+          <div className="mx-2 mb-1 rounded-2xl border border-amber-200 bg-white/95 px-3 py-2 shadow-sm md:mx-4">
+            <div className="mb-1 flex items-center justify-between">
+              <span className="text-[11px] font-black uppercase tracking-[0.12em] text-amber-700">🏆 Bu Haftanın Sorubazları</span>
+              <span className="text-[10px] font-semibold text-zinc-400">Üyeler & yetkililer</span>
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-0.5">
+              {sorubazLeaderboard.slice(0, 10).map((row, index) => (
+                <div key={`${row.username}-${index}`} className="shrink-0 rounded-xl bg-amber-50 px-2.5 py-1.5 text-xs">
+                  <span className="font-black text-amber-700">{index + 1}.</span>{" "}
+                  <span className="font-bold text-zinc-800">{row.username}</span>{" "}
+                  <span className="font-black text-blue-600">{row.points}P</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         <div
           className={`kingmobile-chat-input-shell shrink-0 pb-[env(safe-area-inset-bottom)] md:bg-[var(--chat-input-shell-bg)] ${mobileInputShellClassName}`}

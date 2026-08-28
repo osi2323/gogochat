@@ -12099,6 +12099,36 @@ const legacyUserGifAliases: Record<string, string> = {
                   </div>
                 </div>
 
+                <div className="mb-3 flex flex-wrap items-center justify-center gap-2">
+                  <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
+                    ● {selectedUser.statusModeName || "Çevrimiçi"}
+                  </span>
+                  {!isSelectedProfileOwner && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => handleInviteUserToRoom(selectedUser)}
+                        className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700 hover:bg-blue-100"
+                      >
+                        Odaya Davet
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (isGuestUser || selectedUser.isGuest) {
+                            toast.info("Takip etmek için üye olmalısınız.");
+                            return;
+                          }
+                          void handleSendFriendRequest(selectedUser.username);
+                        }}
+                        className="rounded-full border border-fuchsia-200 bg-fuchsia-50 px-3 py-1 text-xs font-bold text-fuchsia-700 hover:bg-fuchsia-100"
+                      >
+                        Takip Et
+                      </button>
+                    </>
+                  )}
+                </div>
+
                 {/* Comments Section */}
                 <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-sm text-zinc-500 sm:mb-4">
                   <div className="flex items-center gap-1">
@@ -12378,6 +12408,15 @@ const legacyUserGifAliases: Record<string, string> = {
               {/* Comment Input */}
               {!selectedUser.isBot && (
               <div className="border-t border-zinc-200 bg-white p-2.5 sm:p-4">
+                  {isGuestUser ? (
+                    <button
+                      type="button"
+                      onClick={() => toast.info("Kişi kartına yorum yapmak için üye olmalısınız.")}
+                      className="w-full rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-left text-sm font-semibold text-amber-800"
+                    >
+                      🔒 Yorum yapmak için üye olmalısınız.
+                    </button>
+                  ) : (
                   <div className="flex items-center gap-2 rounded-xl bg-zinc-100 px-3 py-2">
                     <MessageSquare className="h-5 w-5 text-zinc-400" />
                     <input
@@ -12408,6 +12447,7 @@ const legacyUserGifAliases: Record<string, string> = {
                       {profileCommentSubmitting ? "..." : "Gönder"}
                     </button>
                   </div>
+                  )}
               </div>
               )}
             </div>

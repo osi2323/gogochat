@@ -3466,7 +3466,7 @@ const userGifOptions = [
                         currentStarCount !== null &&
                         currentStarCount > targetStar &&
                         (!isProtected ||
-                          currentStarCount >= (user.protectedByStarCount || 0));
+                          currentStarCount > (user.protectedByStarCount || 0));
 
                       return (
                         <div
@@ -3587,7 +3587,7 @@ const userGifOptions = [
                                   currentStarCount !== null &&
                                   currentStarCount > targetStar &&
                                   (!isProtected ||
-                                    currentStarCount >=
+                                    currentStarCount >
                                       (user.protectedByStarCount || 0));
                                 return (
                                   <button
@@ -3699,7 +3699,7 @@ const userGifOptions = [
                         currentStarCount !== null &&
                         currentStarCount > targetStar &&
                         (!isProtected ||
-                          currentStarCount >= (user.protectedByStarCount || 0));
+                          currentStarCount > (user.protectedByStarCount || 0));
 
                       return (
                         <div
@@ -7127,9 +7127,9 @@ const RoleEditModal = ({
   const [icon, setIcon] = useState(role.icon || "");
   const targetRoleStarCount = role.starCount ?? 0;
   const canEditTargetRole =
-    currentStarCount !== null && currentStarCount >= targetRoleStarCount;
+    currentStarCount !== null && currentStarCount > targetRoleStarCount;
   const canEditPermissions = starCount > 0 && starCount !== 27;
-  const isReadOnly = [25, 26, 27].includes(starCount);
+  const isReadOnly = starCount === 27;
   const isIconReadOnly = true;
   const [permissions, setPermissions] = useState<Record<string, boolean>>(
     () => {

@@ -77,7 +77,7 @@ export const RolesView: React.FC<RolesViewProps> = ({
         const canEdit =
           canManageRoles &&
           currentStarCount !== null &&
-          currentStarCount >= targetStar;
+          currentStarCount > targetStar;
 
         return (
           <div
@@ -137,7 +137,7 @@ export const RolesView: React.FC<RolesViewProps> = ({
                     ? "Düzenle"
                     : !canManageRoles
                       ? "Rütbe yönetimi yetkiniz yok"
-                      : "Sadece yıldızı size eşit veya düşük rütbeler düzenlenebilir"
+                      : "Sadece sizden daha düşük yıldızlı rütbeler düzenlenebilir"
                 }
                 className={`w-full rounded-md px-4 py-2.5 text-sm font-semibold text-white transition md:ml-4 md:w-auto md:text-xs ${
                   canEdit
